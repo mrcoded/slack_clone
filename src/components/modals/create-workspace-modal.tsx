@@ -7,7 +7,7 @@ import { Button } from "../ui/button";
 import { toast } from "sonner";
 
 import { useCreateWorkspaces } from "@/lib/actions/use-create-workspaces";
-import { useCreateWorkspaceModal } from "@/app/store/use-create-workspace";
+import { useCreateWorkspaceModal } from "@/store/use-create-workspace";
 
 const CreateWorkspaceModal = () => {
   const router = useRouter();
