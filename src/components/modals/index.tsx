@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+
 import CreateWorkspaceModal from "./create-workspace-modal";
+import CreateChannelModal from "./create-channel-modal";
 
 export const Modals = () => {
   //to prevent hydration
@@ -16,6 +18,7 @@ export const Modals = () => {
   return (
     <>
       <CreateWorkspaceModal />
+      <CreateChannelModal />
     </>
   );
 };
