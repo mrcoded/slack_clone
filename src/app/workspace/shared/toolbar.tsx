@@ -4,11 +4,11 @@ import { Info, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 import useWorkspaceId from "@/hooks/use-workspace-id";
-import { useGetWorkspace } from "@/app/workspace/[workspaceId]/actions/use-get-workspace";
+import { getWorkspace } from "@/app/workspace/[workspaceId]/actions/get-workspace";
 
 const Toolbar = () => {
   const workspaceId = useWorkspaceId();
-  const { data } = useGetWorkspace({ id: workspaceId });
+  const { data } = getWorkspace({ id: workspaceId });
 
   return (
     <div className="bg-[#481349] flex items-center justify-between h-10 p-1.5">

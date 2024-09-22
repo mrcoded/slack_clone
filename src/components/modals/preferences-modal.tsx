@@ -4,8 +4,7 @@ import { TrashIcon } from "lucide-react";
 
 import { useConfirm } from "@/hooks/use-confirm";
 import useWorkspaceId from "@/hooks/use-workspace-id";
-import { useUpdateWorkspace } from "@/app/workspace/[workspaceId]/actions/use-update-workspace.actions";
-import { useRemoveWorkspace } from "@/app/workspace/[workspaceId]/actions/use-remove-workspace.actions";
+import { removeWorkspace } from "@/app/workspace/[workspaceId]/actions/remove-workspace";
 
 import { toast } from "sonner";
 import { Input } from "../ui/input";
@@ -19,6 +18,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
+import { updateWorkspace } from "@/app/workspace/[workspaceId]/actions/update-workspace";
 
 interface PreferencesModalProps {
   isOpen: boolean;
@@ -33,6 +33,7 @@ const PreferencesModal = ({
 }: PreferencesModalProps) => {
   const router = useRouter();
   const workspaceId = useWorkspaceId();
+
   const [ConfirmDialog, confirm] = useConfirm(
     "Are you sure?",
     "This action is irreversible."
@@ -41,18 +42,18 @@ const PreferencesModal = ({
   const [value, setValue] = useState(initialValue);
   const [editOpen, setEditOpen] = useState(false);
 
-  const { mutate: updateWorkspace, isPending: isUpdatingWorkspace } =
-    useUpdateWorkspace();
+  const { mutate: updatingWorkspace, isPending: isUpdatingWorkspace } =
+    updateWorkspace();
 
-  const { mutate: removeWorkspace, isPending: isRemovingWorkspace } =
-    useRemoveWorkspace();
+  const { mutate: removingWorkspace, isPending: isRemovingWorkspace } =
+    removeWorkspace();
 
   const handleRemove = async () => {
     const ok = await confirm();
 
     if (!ok) return;
 
-    removeWorkspace(
+    removingWorkspace(
       {
         id: workspaceId,
       },
@@ -71,7 +72,7 @@ const PreferencesModal = ({
   const handleEdit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    updateWorkspace(
+    updatingWorkspace(
       {
         id: workspaceId,
         name: value,
