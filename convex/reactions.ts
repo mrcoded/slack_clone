@@ -33,7 +33,7 @@ export const toggle = mutation({
 
     const member = await getMember(ctx, message.workspaceId, userId);
 
-    if (!member || member._id !== message.memberId) {
+    if (!member) {
       throw new Error("Unauthorized");
     }
 

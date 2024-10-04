@@ -41,7 +41,7 @@ const populateThreads = async (ctx: QueryCtx, messageId: Id<"messages">) => {
     )
     .collect();
 
-  //check on replies
+  //check on threads
   if (messages.length === 0) {
     return {
       count: 0,
@@ -185,7 +185,7 @@ export const get = query({
             }
 
             const reactions = await populateReactions(ctx, message._id);
-            const replies = await populateThreads(ctx, message._id);
+            const threads = await populateThreads(ctx, message._id);
             const image = message.image
               ? await ctx.storage.getUrl(message.image)
               : undefined;
@@ -230,9 +230,9 @@ export const get = query({
               member,
               user,
               reactions: reactionsWithoutMemberIdProperty,
-              repliesCount: replies.count,
-              repliesImage: replies.image,
-              threadTimestamp: replies.timestamp,
+              threadsCount: threads.count,
+              threadsImage: threads.image,
+              threadTimestamp: threads.timestamp,
             };
           })
         )
