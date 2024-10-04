@@ -1,20 +1,23 @@
 import React from "react";
 import dynamic from "next/dynamic";
 
+import { cn } from "@/lib/utils";
 import { Doc, Id } from "@/../convex/_generated/dataModel";
 import { format, isToday, isYesterday } from "date-fns";
 import { toast } from "sonner";
 
+import { useConfirm } from "@/hooks/use-confirm";
+import { usePanel } from "@/hooks/use-panel";
 import { updateMessage } from "../actions/update-message";
 import { removeMessage } from "../actions/remove-message";
+import { toggleReaction } from "@/app/reactions/actions/toggle-reaction";
 
 import MessageToolbar from "./message-toolbar";
 import Hint from "@/components/hint";
 import Thumbnail from "@/components/thumbnail";
+import Reactions from "@/components/reactions";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { cn } from "@/lib/utils";
-import { useConfirm } from "@/hooks/use-confirm";
 
 const Renderer = dynamic(() => import("@/app/messages/_components/renderer"), {
   ssr: false,
@@ -33,7 +36,7 @@ interface MessageProps {
   reactions: Array<
     Omit<Doc<"reactions">, "memberId"> & {
       count: number;
-      memberId: Id<"members">[];
+      memberIds: Id<"members">[];
     }
   >;
   body: Doc<"messages">["body"];
@@ -43,10 +46,10 @@ interface MessageProps {
   isEditing: boolean;
   setEditingId: (id: Id<"messages"> | null) => void;
   isCompact?: boolean;
-  hideRepliesButton?: boolean;
-  repliesCount?: string;
-  repliesImage?: string;
-  repliesTimestamp?: number;
+  hideThreadsButton?: boolean;
+  threadsCount?: string;
+  threadsImage?: string;
+  threadsTimestamp?: number;
 }
 
 const formatFullTime = (date: Date) => {
@@ -72,11 +75,13 @@ const Message = ({
   isEditing,
   setEditingId,
   isCompact,
-  hideRepliesButton,
-  repliesCount,
-  repliesImage,
-  repliesTimestamp,
+  hideThreadsButton,
+  threadsCount,
+  threadsImage,
+  threadsTimestamp,
 }: MessageProps) => {
+  const { threadId, onOpenMessage, onClose } = usePanel();
+
   const [ConfirmDialog, confirm] = useConfirm(
     "Delete message",
     "Are you sure you want to delete this message? This cannot be undone."
@@ -86,8 +91,21 @@ const Message = ({
     updateMessage();
   const { mutate: removingMessage, isPending: isRemovingMessage } =
     removeMessage();
+  const { mutate: togglingReaction, isPending: isTogglingReaction } =
+    toggleReaction();
 
   const isPending = isUpdatingMessage;
+
+  const handleReaction = (value: string) => {
+    togglingReaction(
+      { messageId: id, value },
+      {
+        onError: () => {
+          toast.error("Unable to toggle reaction");
+        },
+      }
+    );
+  };
 
   const handleUpdate = ({ body }: { body: string }) => {
     updatingMessage(
@@ -114,7 +132,10 @@ const Message = ({
       {
         onSuccess: () => {
           toast.success("Message deleted");
-          setEditingId(null);
+
+          if (threadId === id) {
+            onClose();
+          }
         },
         onError: () => {
           toast.error("Failed to delete message");
@@ -161,6 +182,8 @@ const Message = ({
                     (edited)
                   </span>
                 ) : null}
+
+                <Reactions data={reactions} onChange={handleReaction} />
               </div>
             )}
           </div>
@@ -170,10 +193,10 @@ const Message = ({
               isAuthor={isAuthor}
               isPending={isPending}
               handleEdit={() => setEditingId(id)}
-              handleReply={() => {}}
+              handleThreads={() => onOpenMessage(id)}
               handleDelete={handleDelete}
-              handleReaction={() => {}}
-              hideRepliesButton={hideRepliesButton}
+              handleReaction={handleReaction}
+              hideThreadsButton={hideThreadsButton}
             />
           )}
         </div>
@@ -229,6 +252,8 @@ const Message = ({
               {updatedAt ? (
                 <span className="text-xs text-muted-foreground">(edited)</span>
               ) : null}
+
+              <Reactions data={reactions} onChange={handleReaction} />
             </div>
           )}
         </div>
@@ -237,10 +262,10 @@ const Message = ({
             isAuthor={isAuthor}
             isPending={isPending}
             handleEdit={() => setEditingId(id)}
-            handleReply={() => {}}
+            handleThreads={() => onOpenMessage(id)}
             handleDelete={handleDelete}
-            handleReaction={() => {}}
-            hideRepliesButton={hideRepliesButton}
+            handleReaction={handleReaction}
+            hideThreadsButton={hideThreadsButton}
           />
         )}
       </div>
