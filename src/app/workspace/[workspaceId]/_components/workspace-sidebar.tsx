@@ -10,6 +10,7 @@ import {
 import { useCreateChannelModal } from "@/store/use-create-channel";
 import useWorkspaceId from "@/hooks/use-workspace-id";
 import useChannelId from "@/hooks/use-channel-id";
+import useMemberId from "@/hooks/use-member";
 
 import { getWorkspace } from "@/app/workspace/[workspaceId]/actions/get-workspace";
 import { getCurrentMember } from "@/app/members/actions/get-current-member.actions";
@@ -22,6 +23,7 @@ import WorkspaceSection from "./workspace-section";
 import UserItem from "./user-item";
 
 const WorkspaceSidebar = () => {
+  const memberId = useMemberId();
   const workspaceId = useWorkspaceId();
   const channelId = useChannelId();
 
@@ -99,6 +101,7 @@ const WorkspaceSidebar = () => {
             id={item._id}
             label={item.user.name}
             image={item.user.image}
+            variant={item._id === memberId ? "active" : "default"}
           />
         ))}
       </WorkspaceSection>
