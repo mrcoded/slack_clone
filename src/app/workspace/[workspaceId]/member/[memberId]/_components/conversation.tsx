@@ -21,6 +21,7 @@ const Conversation = ({ id }: ConversationProps) => {
   const { data: member, isLoading: memberLoading } = getMember({
     id: memberId,
   });
+
   const { results, status, loadMore } = getMessages({ conversationId: id });
 
   if (memberLoading) {
