@@ -11,8 +11,6 @@ import ChannelHero from "@/app/channels/_components/channel-hero";
 import ConversationHero from "@/app/workspace/[workspaceId]/member/[memberId]/_components/conversation-hero";
 import { getCurrentMember } from "@/app/members/actions/get-current-member.actions";
 
-import { Button } from "@/components/ui/button";
-
 const TIME_THRESHOLD = 5;
 
 interface MessageListProps {
@@ -105,7 +103,8 @@ const MessageList = ({
                 hideThreadsButton={variant === "thread"}
                 threadsCount={message.threadsCount}
                 threadsImage={message.threadsImage}
-                threadsTimestamp={message.threadsTimestamp}
+                threadName={message.threadName}
+                threadTimestamp={message.threadTimestamp}
               />
             );
           })}
@@ -138,9 +137,11 @@ const MessageList = ({
           </span>
         </div>
       )}
+
       {variant === "channel" && channelName && channelCreationTime && (
         <ChannelHero name={channelName} creationTime={channelCreationTime} />
       )}
+
       {variant === "conversation" && (
         <ConversationHero name={memberName} image={memberImage} />
       )}
