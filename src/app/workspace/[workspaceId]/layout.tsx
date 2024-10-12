@@ -10,6 +10,7 @@ import Sidebar from "../shared/sidebar";
 
 import Thread from "@/components/thread";
 import WorkspaceSidebar from "./_components/workspace-sidebar";
+import Profile from "../../members/_components/profile";
 
 import {
   ResizableHandle,
@@ -22,9 +23,9 @@ interface WorkspaceIdLayoutProps {
 }
 
 const WorkspaceIdLayout = ({ children }: WorkspaceIdLayoutProps) => {
-  const { threadId, onClose } = usePanel();
+  const { threadId, profileId, onClose } = usePanel();
 
-  const showPanel = !!threadId;
+  const showPanel = !!threadId || !!profileId;
 
   return (
     <div className="h-full">
@@ -52,6 +53,11 @@ const WorkspaceIdLayout = ({ children }: WorkspaceIdLayoutProps) => {
                 {threadId ? (
                   <Thread
                     messageId={threadId as Id<"messages">}
+                    onClose={onClose}
+                  />
+                ) : profileId ? (
+                  <Profile
+                    memberId={profileId as Id<"members">}
                     onClose={onClose}
                   />
                 ) : (
