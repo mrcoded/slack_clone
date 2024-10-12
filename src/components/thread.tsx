@@ -140,17 +140,19 @@ const Thread = ({ messageId, onClose }: ThreadProps) => {
   );
 
   if (loadingMessage || status === "LoadingFirstPage") {
-    <div className="h-full flex flex-col">
-      <div className="h-[49px] flex justify-between items-center px-4 border borber-b">
-        <p className="text-lg font-bold">Thread</p>
-        <Button onClick={onClose} size="iconSm" variant="ghost">
-          <XIcon className="size-5 stroke-[1.5]" />
-        </Button>
+    return (
+      <div className="h-full flex flex-col">
+        <div className="h-[49px] flex justify-between items-center px-4 border borber-b">
+          <p className="text-lg font-bold">Thread</p>
+          <Button onClick={onClose} size="iconSm" variant="ghost">
+            <XIcon className="size-5 stroke-[1.5]" />
+          </Button>
+        </div>
+        <div className="flex flex-col gap-y-2 h-full items-center justify-center">
+          <Loader className="size-5 animate-spin text-muted-foreground" />
+        </div>
       </div>
-      <div className="flex flex-col gap-y-2 h-full items-center justify-center">
-        <Loader className="size-5 animate-spin text-muted-foreground" />
-      </div>
-    </div>;
+    );
   }
 
   if (!message) {
