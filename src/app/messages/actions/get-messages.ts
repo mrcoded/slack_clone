@@ -4,7 +4,7 @@ import { paginationOptsValidator } from "convex/server";
 import { api } from "@/../convex/_generated/api";
 import { Id } from "@/../convex/_generated/dataModel";
 
-const BATCH_SIZE = 20;
+const BATCH_SIZE = 5;
 
 interface getMessagesProps {
   channelId?: Id<"channels">;
@@ -12,8 +12,7 @@ interface getMessagesProps {
   conversationId?: Id<"conversations">;
 }
 
-export type GetMessagesReturnType =
-  (typeof api.messages.get._returnType)["page"];
+export type GetMessagesReturnType = (typeof api.messages.get._returnType)["page"];
 
 export const getMessages = ({
   channelId,
