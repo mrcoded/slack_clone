@@ -1,9 +1,8 @@
-import React from "react";
 import dynamic from "next/dynamic";
 
 import { cn } from "@/lib/utils";
 import { Doc, Id } from "@/../convex/_generated/dataModel";
-import { format, isToday, isYesterday } from "date-fns";
+import { format, isToday, isYesterday, getTime, parseISO } from "date-fns";
 import { toast } from "sonner";
 
 import { useConfirm } from "@/hooks/use-confirm";
@@ -55,11 +54,6 @@ interface MessageProps {
 }
 
 const formatFullTime = (date: Date) => {
-  // const date = new Date(dateStr);
-  console.log(date);
-  // if (isToday(date)) return "Today";
-  // if (isYesterday(date)) return "Yesterday";
-  // return format(date, "EEEE, MMMM d");
   return `${isToday(date) ? "Today" : isYesterday(date) ? "Yesterday" : format(date, "MM d, yyyy")} at ${format(date, "h:mm:ss a")}`;
 };
 
@@ -160,9 +154,9 @@ const Message = ({
           )}
         >
           <div className="flex items-start gap-2">
-            <Hint label="">
+            <Hint label={formatFullTime(new Date(createdAt))}>
               <button className="text-xs text-muted-foreground opacity-0 group-hover:opacity-100 w-[40px] leading-[22px] text-center hover:underline">
-                {format(Date.now(), "hh:mm")}
+                {format(new Date(createdAt), "hh:mm")}
               </button>
             </Hint>
             {isEditing ? (
@@ -255,9 +249,9 @@ const Message = ({
                   {authorName}
                 </button>
                 <span>&nbsp;&nbsp;</span>
-                <Hint label="">
+                <Hint label={formatFullTime(new Date(createdAt))}>
                   <button className="text-xs text-muted-foreground hover:underline">
-                    {format(Date.now(), "h:mm a")}
+                    {format(new Date(createdAt), "h:mm a")}
                   </button>
                 </Hint>
               </div>
