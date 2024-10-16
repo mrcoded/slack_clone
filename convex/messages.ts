@@ -223,6 +223,7 @@ export const get = query({
     parentMessageId: v.optional(v.id("messages")),
     paginationOpts: paginationOptsValidator,
   },
+
   handler: async (ctx, args) => {
     const userId = await auth.getUserId(ctx);
 
@@ -249,7 +250,7 @@ export const get = query({
         q
           .eq("channelId", args.channelId)
           .eq("parentMessageId", args.parentMessageId)
-          .eq("conversationId", args.conversationId)
+          .eq("conversationId", _conversationId)
       )
       .order("desc")
       .paginate(args.paginationOpts);
@@ -308,6 +309,7 @@ export const get = query({
 
             return {
               ...message,
+              createdAt: message._creationTime,
               image,
               member,
               user,
