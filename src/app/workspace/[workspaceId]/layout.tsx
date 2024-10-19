@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import { Loader } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 import { Id } from "@/../convex/_generated/dataModel";
 import { usePanel } from "@/hooks/use-panel";
@@ -9,6 +10,8 @@ import Toolbar from "../shared/toolbar";
 import Sidebar from "../shared/sidebar";
 
 import Thread from "@/components/thread";
+import { Loading } from "@/components/loading";
+
 import WorkspaceSidebar from "./_components/workspace-sidebar";
 import Profile from "../../members/_components/profile";
 
@@ -23,6 +26,11 @@ interface WorkspaceIdLayoutProps {
 }
 
 const WorkspaceIdLayout = ({ children }: WorkspaceIdLayoutProps) => {
+  const params = useSearchParams();
+
+  const isActiveThread = params.get("threadId");
+  const isActiveProfile = params.get("profileId");
+
   const { threadId, profileId, onClose } = usePanel();
 
   const showPanel = !!threadId || !!profileId;
@@ -39,18 +47,31 @@ const WorkspaceIdLayout = ({ children }: WorkspaceIdLayoutProps) => {
           <ResizablePanel
             defaultSize={20}
             minSize={11}
-            className="bg-[#5E2C5F]"
+            className="bg-[#5E2C5F] hidden sm:block"
           >
             <WorkspaceSidebar />
             <div>Channels Sidebar</div>
           </ResizablePanel>
-          <ResizableHandle withHandle />
-          <ResizablePanel minSize={20} defaultSize={80}>
+          <ResizableHandle withHandle className="hidden md:flex" />
+          <ResizablePanel
+            minSize={20}
+            defaultSize={80}
+            className={cn(
+              isActiveThread && "hidden md:flex",
+              isActiveProfile && "hidden md:flex"
+            )}
+          >
             {children}
           </ResizablePanel>
           {showPanel && (
             <>
-              <ResizableHandle withHandle />
+              <ResizableHandle
+                withHandle
+                className={cn(
+                  isActiveThread && "hidden md:flex",
+                  isActiveProfile && "hidden md:flex"
+                )}
+              />
               <ResizablePanel minSize={20} defaultSize={29}>
                 {threadId ? (
                   <Thread
@@ -63,9 +84,7 @@ const WorkspaceIdLayout = ({ children }: WorkspaceIdLayoutProps) => {
                     onClose={onClose}
                   />
                 ) : (
-                  <span className="flex h-full items-center justify-center">
-                    <Loader className="size-4 animate-spin text-muted-foreground" />
-                  </span>
+                  <Loading />
                 )}
               </ResizablePanel>
             </>
