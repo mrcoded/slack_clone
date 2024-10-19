@@ -5,20 +5,21 @@ import Link from "next/link";
 import {
   AlertTriangle,
   ChevronDownIcon,
-  Loader,
   MailIcon,
   XIcon,
 } from "lucide-react";
 
 import { Id } from "@/../convex/_generated/dataModel";
-import useWorkspaceId from "@/hooks/use-workspace-id";
+import { toast } from "sonner";
 
+import useWorkspaceId from "@/hooks/use-workspace-id";
 import { useConfirm } from "@/hooks/use-confirm";
 import { getMember } from "@/app/members/actions/get-member";
 import { removeMember } from "../actions/remove-member";
 import { updateMember } from "../actions/update-member";
 import { getCurrentMember } from "../actions/get-current-member.actions";
-import { toast } from "sonner";
+
+import { Loading } from "@/components/loading";
 
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -136,9 +137,7 @@ const Profile = ({ memberId, onClose }: ProfileProps) => {
             <XIcon className="size-5 stroke-[1.5]" />
           </Button>
         </div>
-        <div className="flex flex-col gap-y-2 h-full items-center justify-center">
-          <Loader className="size-5 animate-spin text-muted-foreground" />
-        </div>
+        <Loading style="gap-y-2 flex-col"/>
       </div>
     );
   }

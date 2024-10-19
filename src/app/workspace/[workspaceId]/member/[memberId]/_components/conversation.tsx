@@ -1,5 +1,4 @@
 import React from "react";
-import { Loader } from "lucide-react";
 
 import { Id } from "@/../convex/_generated/dataModel";
 
@@ -11,6 +10,7 @@ import { getMessages } from "@/app/messages/actions/get-messages";
 import MessageList from "@/app/messages/_components/message-list";
 import ConversationHeader from "./conversation-header";
 import { ConversationChatInput } from "./conversation-chat-input";
+import { Loading } from "@/components/loading";
 
 interface ConversationProps {
   id: Id<"conversations">;
@@ -29,9 +29,7 @@ const Conversation = ({ id }: ConversationProps) => {
 
   if (memberLoading) {
     return (
-      <div className="flex flex-col gap-y-2 h-full items-center justify-center">
-        <Loader className="size-6 animate-spin text-muted-foreground" />
-      </div>
+      <Loading style="flex-col gap-y-2"/>
     );
   }
 

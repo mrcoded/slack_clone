@@ -1,10 +1,11 @@
 import React from "react";
 import { useRouter } from "next/navigation";
-import { Loader, Plus } from "lucide-react";
+import {  Plus } from "lucide-react";
 
 import useWorkspaceId from "@/hooks/use-workspace-id";
 import { getWorkspace } from "@/app/workspace/[workspaceId]/actions/get-workspace";
 import { useGetWorkspaces } from "@/lib/actions/use-get-workspaces";
+import { Loading } from "@/components/loading";
 
 import { useCreateWorkspaceModal } from "@/store/use-create-workspace";
 
@@ -35,7 +36,7 @@ const WorkspaceSwitcher = () => {
       <DropdownMenuTrigger asChild>
         <Button className="size-9 relative overflow-hidden bg-[#ABABAD] hover:bg-[#ABABAD]/80 text-slate-800 font-semibold text-xl">
           {workspaceLoading ? (
-            <Loader className="size-5 animate-spin shrink-0" />
+            <Loading iconStyle="shrink-0" />
           ) : (
             workspace?.name.charAt(0).toUpperCase()
           )}

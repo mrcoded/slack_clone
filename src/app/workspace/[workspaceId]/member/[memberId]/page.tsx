@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AlertTriangle, Loader } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 
 import { Id } from "@/../convex/_generated/dataModel";
 import { toast } from "sonner";
@@ -10,6 +10,8 @@ import useWorkspaceId from "@/hooks/use-workspace-id";
 
 import { createOrGetConversation } from "@/api/conversations/create-or-get-conversation";
 import Conversation from "./_components/conversation";
+
+import { Loading } from "@/components/loading";
 
 const MemberIdPage = () => {
   const workspaceId = useWorkspaceId();
@@ -39,9 +41,7 @@ const MemberIdPage = () => {
 
   if (isPending) {
     return (
-      <div className="flex flex-col gap-y-2 h-full items-center justify-center">
-        <Loader className="size-6 animate-spin text-muted-foreground" />
-      </div>
+      <Loading style="flex-col gap-y-2"/>
     );
   }
 

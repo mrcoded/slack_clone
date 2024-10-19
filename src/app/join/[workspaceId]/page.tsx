@@ -3,16 +3,17 @@
 import { useEffect, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Loader } from "lucide-react";
 import { useRouter } from "next/navigation";
+
+import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 import VerificationInput from "react-verification-input";
 import useWorkspaceId from "@/hooks/use-workspace-id";
 import { getWorkspaceInfo } from "@/app/workspace/[workspaceId]/actions/get-workspace-info";
 import { joinWorkspace } from "@/app/workspace/[workspaceId]/actions/join-workspace";
+import { Loading } from "@/components/loading";
 
-import { cn } from "@/lib/utils";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 
 const JoinWorkspace = () => {
@@ -45,9 +46,7 @@ const JoinWorkspace = () => {
 
   if (isLoading) {
     return (
-      <div className="h-full flex items-center justify-center">
-        <Loader className="size-6 animate-spin text-muted-foreground" />
-      </div>
+    <Loading/>
     );
   }
   return (
