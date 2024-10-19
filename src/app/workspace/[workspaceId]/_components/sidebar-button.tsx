@@ -1,9 +1,10 @@
 import React from "react";
 import { LucideIcon } from "lucide-react";
+
 import { IconType } from "react-icons/lib";
+import { cn } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 
 interface SidebarButtonProps {
   icon: LucideIcon | IconType;
