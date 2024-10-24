@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Info, Search } from "lucide-react";
 
@@ -60,16 +59,23 @@ const Toolbar = () => {
           <CommandList>
             <CommandEmpty>No results found.</CommandEmpty>
             <CommandGroup heading="Channels">
-              {channels?.map((channel) => (
-                <CommandItem onSelect={() => onChannelClick(channel._id)}>
+              {channels?.map((channel, index) => (
+                <CommandItem
+                  key={index}
+                  onSelect={() => onChannelClick(channel._id)}
+                >
                   {channel.name}
                 </CommandItem>
               ))}
             </CommandGroup>
             <CommandSeparator />
             <CommandGroup heading="Members">
-              {members?.map((member) => (
-                <CommandItem onSelect={() => onMemberClick(member._id)} asChild>
+              {members?.map((member, index) => (
+                <CommandItem
+                  key={index}
+                  onSelect={() => onMemberClick(member._id)}
+                  asChild
+                >
                   {member.user.name}
                 </CommandItem>
               ))}
