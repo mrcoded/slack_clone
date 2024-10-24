@@ -7,6 +7,8 @@ import {
   SendHorizonal,
 } from "lucide-react";
 
+import { cn } from "@/lib/utils";
+
 import { useCreateChannelModal } from "@/store/use-create-channel";
 import useWorkspaceId from "@/hooks/use-workspace-id";
 import useChannelId from "@/hooks/use-channel-id";
@@ -21,11 +23,15 @@ import WorkspaceHeader from "./workspace-header";
 import SidebarItems from "./sidebar-items";
 import WorkspaceSection from "./workspace-section";
 import UserItem from "./user-item";
+import { useParams, usePathname } from "next/navigation";
 
 const WorkspaceSidebar = () => {
   const memberId = useMemberId();
   const workspaceId = useWorkspaceId();
   const channelId = useChannelId();
+  const pathname = usePathname();
+
+  const isActiveChannel = pathname.includes(`/channel/${channelId}`);
 
   const [_isOpen, setIsOpen] = useCreateChannelModal();
 
@@ -63,14 +69,24 @@ const WorkspaceSidebar = () => {
   }
 
   return (
-    <div className="flex flex-col bg-[#5E2C5F] h-full">
+    <div
+      className={cn(
+        "flex flex-col bg-black/75 md:bg-[#5E2C5F] h-full",
+        isActiveChannel && "hidden md:flex"
+      )}
+    >
       <WorkspaceHeader
         workspace={workspace}
         isAdmin={member.role === "admin"}
       />
 
       <div className="flex flex-col px-2 mt-3">
-        <SidebarItems label="Threads" icon={MessageSquareText} id="threads" />
+        <SidebarItems
+          link={`/threads`}
+          label="Threads"
+          icon={MessageSquareText}
+          id="threads"
+        />
         <SidebarItems label="Drafts & Sent" icon={SendHorizonal} id="drafts" />
       </div>
 
@@ -81,6 +97,7 @@ const WorkspaceSidebar = () => {
       >
         {channels?.map((item) => (
           <SidebarItems
+            link={`/channel/${item._id}`}
             key={item._id}
             icon={HashIcon}
             label={item.name}
