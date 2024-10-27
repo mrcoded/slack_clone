@@ -1,17 +1,24 @@
 "use client";
 
-import { Loader, TriangleAlert } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { TriangleAlert } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 import useChannelId from "@/hooks/use-channel-id";
 import { getChannel } from "./actions/get-channel";
 import { getMessages } from "@/app/messages/actions/get-messages";
 
+import { Loading } from "@/components/loading";
 import ChannelHeader from "./_components/channel-header";
 import { ChatInput } from "./_components/chat-input";
 import MessageList from "@/app/messages/_components/message-list";
 
 const ChannelIdPage = () => {
+  const params = useSearchParams();
   const channelId = useChannelId();
+
+  const isActiveThread = params.get("threadId");
+  const isActiveProfile = params.get("profileId");
 
   const { results, status, loadMore } = getMessages({ channelId });
 
@@ -20,11 +27,7 @@ const ChannelIdPage = () => {
   });
 
   if (channelLoading || status === "LoadingFirstPage") {
-    return (
-      <div className="h-full flex-1 flex items-center justify-center">
-        <Loader className="size-5 animate-spin text-muted-foreground" />
-      </div>
-    );
+    return <Loading style="flex-1" />;
   }
 
   if (!channel) {
@@ -37,7 +40,13 @@ const ChannelIdPage = () => {
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div
+      className={cn(
+        "flex flex-col h-full",
+        isActiveThread && "hidden md:flex",
+        isActiveProfile && "hidden md:flex"
+      )}
+    >
       <ChannelHeader title={channel.name} />
       <MessageList
         channelName={channel.name}
