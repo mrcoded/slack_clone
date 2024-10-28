@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { Loader, TriangleAlert } from "lucide-react";
+import { TriangleAlert } from "lucide-react";
 
 import useWorkspaceId from "@/hooks/use-workspace-id";
 import { useCreateChannelModal } from "@/store/use-create-channel";
@@ -10,6 +10,9 @@ import { useCreateChannelModal } from "@/store/use-create-channel";
 import { getWorkspace } from "./actions/get-workspace";
 import { getCurrentMember } from "@/app/members/actions/get-current-member.actions";
 import { getChannels } from "./channel/[channelId]/actions/get-channels";
+import WorkspaceSidebar from "./_components/workspace-sidebar";
+
+import { Loading } from "@/components/loading";
 
 const WorkspaceIdPage = () => {
   const router = useRouter();
@@ -42,7 +45,7 @@ const WorkspaceIdPage = () => {
       return;
 
     if (channelId) {
-      router.push(`/workspace/${workspaceId}/channel/${channelId}`);
+      // router.push(`/workspace/${workspaceId}/channel/${channelId}`);
     } else if (!isOpen && isAdmin) {
       setIsOpen(true);
     }
@@ -61,11 +64,7 @@ const WorkspaceIdPage = () => {
   ]);
 
   if (workspaceLoading || channelsLoading || memberLoading) {
-    return (
-      <div className="h-full flex-1 flex items-center justify-center flex-col gap-2">
-        <Loader className="size-6 animate-spin text-muted-foreground" />
-      </div>
-    );
+    return <Loading style="flex-1 flex-col gap-y-2" />;
   }
 
   if (!workspace || !member) {
@@ -80,10 +79,11 @@ const WorkspaceIdPage = () => {
   }
 
   return (
-    <div className="h-full flex-1 flex items-center justify-center flex-col gap-2">
-      <TriangleAlert className="size-6 text-muted-foreground" />
-      <span className="text-sm text-muted-foreground">No channel found</span>
-    </div>
+    <WorkspaceSidebar />
+    //   <div className="h-full flex-1 flex items-center justify-center flex-col gap-2">
+    //     <TriangleAlert className="size-6 text-muted-foreground" />
+    //     <span className="text-sm text-muted-foreground">No channel found</span>
+    //   </div>
   );
 };
 
