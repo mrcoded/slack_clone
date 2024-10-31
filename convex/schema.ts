@@ -20,6 +20,7 @@ const schema = defineSchema({
   channels: defineTable({
     name: v.string(),
     workspaceId: v.id("workspaces"),
+    unreadStatusId: v.optional(v.id("unreadStatus")),
   }).index("by_workspace_id", ["workspaceId"]),
   conversations: defineTable({
     workspaceId: v.id("workspaces"),
@@ -35,8 +36,10 @@ const schema = defineSchema({
     parentMessageId: v.optional(v.id("messages")),
     conversationId: v.optional(v.id("conversations")),
     updatedAt: v.optional(v.number()),
+    unreadStatusId: v.optional(v.id("unreadStatus")),
   })
     .index("by_workspace_id", ["workspaceId"])
+    .index("by_unread_status_id", ["unreadStatusId"])
     .index("by_member_id", ["memberId"])
     .index("by_channel_id", ["channelId"])
     .index("by_conversation_id", ["conversationId"])
@@ -55,6 +58,18 @@ const schema = defineSchema({
     .index("by_workspace_id", ["workspaceId"])
     .index("by_message_id", ["messageId"])
     .index("by_member_id", ["memberId"]),
+  unreadStatus: defineTable({
+    memberId: v.id("members"),
+    channelId: v.optional(v.id("channels")),
+    conversationId: v.optional(v.id("conversations")),
+    unread: v.boolean(), // Boolean to track unread status
+  })
+    .index("by_member_id", ["memberId"])
+    .index("by_member_id_channel_id_conversation_id", [
+      "memberId",
+      "channelId",
+      "conversationId",
+    ]),
 });
 
 export default schema;
