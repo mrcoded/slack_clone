@@ -1,4 +1,5 @@
 import React from "react";
+import { usePathname } from "next/navigation";
 import {
   AlertTriangle,
   HashIcon,
@@ -8,22 +9,24 @@ import {
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { Id } from "@/../convex/_generated/dataModel";
 
-import { useCreateChannelModal } from "@/store/use-create-channel";
-import useWorkspaceId from "@/hooks/use-workspace-id";
-import useChannelId from "@/hooks/use-channel-id";
 import useMemberId from "@/hooks/use-member";
+import useChannelId from "@/hooks/use-channel-id";
+import useWorkspaceId from "@/hooks/use-workspace-id";
+import { useCreateChannelModal } from "@/store/use-create-channel";
 
+import { getMembers } from "@/app/members/actions/get-members.actions";
+import { getUnreadStatus } from "@/app/messages/actions/get-unread-status";
+import { getChannels } from "../channel/[channelId]/actions/get-channels";
 import { getWorkspace } from "@/app/workspace/[workspaceId]/actions/get-workspace";
 import { getCurrentMember } from "@/app/members/actions/get-current-member.actions";
-import { getChannels } from "../channel/[channelId]/actions/get-channels";
-import { getMembers } from "@/app/members/actions/get-members.actions";
+import { markChannelStatus } from "../channel/[channelId]/actions/mark-channel-status";
 
-import WorkspaceHeader from "./workspace-header";
-import SidebarItems from "./sidebar-items";
-import WorkspaceSection from "./workspace-section";
 import UserItem from "./user-item";
-import { useParams, usePathname } from "next/navigation";
+import SidebarItems from "./sidebar-items";
+import WorkspaceHeader from "./workspace-header";
+import WorkspaceSection from "./workspace-section";
 
 const WorkspaceSidebar = () => {
   const memberId = useMemberId();
@@ -34,6 +37,9 @@ const WorkspaceSidebar = () => {
   const isActiveChannel = pathname.includes(`/channel/${channelId}`);
 
   const [_isOpen, setIsOpen] = useCreateChannelModal();
+
+  const markingAsRead = markChannelStatus();
+  const { data } = getUnreadStatus({ workspaceId, channelId });
 
   const { data: member, isLoading: memberLoading } = getCurrentMember({
     workspaceId,
@@ -67,6 +73,20 @@ const WorkspaceSidebar = () => {
       </div>
     );
   }
+
+  const markAsRead = ({ channelId }: { channelId: Id<"channels"> }) => {
+    markingAsRead.mutate(
+      { channelId },
+      {
+        onSuccess: () => {
+          console.log("done", channelId);
+        },
+        onError: () => {
+          console.log("error");
+        },
+      }
+    );
+  };
 
   return (
     <div
@@ -102,7 +122,9 @@ const WorkspaceSidebar = () => {
             icon={HashIcon}
             label={item.name}
             id={item._id}
+            markAsRead={() => markAsRead({ channelId: item._id })}
             variant={channelId === item._id ? "active" : "default"}
+            status={data?.find((c) => c.channelId === item._id)?.unread}
           />
         ))}
       </WorkspaceSection>
