@@ -62,13 +62,16 @@ const schema = defineSchema({
     memberId: v.id("members"),
     channelId: v.optional(v.id("channels")),
     conversationId: v.optional(v.id("conversations")),
+    workspaceId: v.id("workspaces"),
     unread: v.boolean(), // Boolean to track unread status
   })
     .index("by_member_id", ["memberId"])
-    .index("by_member_id_channel_id_conversation_id", [
+    .index("by_channel_id", ["channelId"])
+    .index("by_workspace_id", ["workspaceId"])
+    .index("by_member_id_channel_id_workspace_id", [
       "memberId",
       "channelId",
-      "conversationId",
+      "workspaceId",
     ]),
 });
 
