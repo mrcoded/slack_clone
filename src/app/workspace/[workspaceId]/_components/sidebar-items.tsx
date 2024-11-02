@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
-
 import { LucideIcon } from "lucide-react";
+
 import { IconType } from "react-icons/lib";
 import { cn } from "@/lib/utils";
 import { cva, type VariantProps } from "class-variance-authority";
@@ -29,6 +29,8 @@ interface SidebarItemProps {
   link?: string;
   label: string;
   id: string;
+  status?: boolean;
+  markAsRead?: () => void;
   icon: LucideIcon | IconType;
   variant?: VariantProps<typeof sidebarItemVariants>["variant"];
 }
@@ -37,6 +39,8 @@ const SidebarItems = ({
   link,
   label,
   id,
+  status,
+  markAsRead,
   icon: Icon,
   variant,
 }: SidebarItemProps) => {
@@ -46,7 +50,12 @@ const SidebarItems = ({
     <Button
       variant="transparent"
       size="sm"
-      className={cn(sidebarItemVariants({ variant: variant }))}
+      onClick={markAsRead}
+      className={cn(
+        sidebarItemVariants({ variant: variant }),
+        status === true && "font-extrabold text-white",
+        status === false && sidebarItemVariants({ variant: variant })
+      )}
       asChild
     >
       <Link href={`/workspace/${workspaceId}/${link}`}>
