@@ -1,41 +1,28 @@
-import {
-  PaginatedQueryReference,
-  UsePaginatedQueryResult,
-  usePaginatedQuery,
-} from "convex/react";
-import { PaginationResult } from "convex/server";
+import { useQuery } from "@/../convex/react";
 
 import { api } from "@/../convex/_generated/api";
 import { Id } from "@/../convex/_generated/dataModel";
 
-const BATCH_SIZE = 5;
-
 interface getUnreadStatusProps {
-  channelId: Id<"channels">;
   memberId?: Id<"members">;
+  channelId: Id<"channels">;
   conversationId?: Id<"conversations">;
-  unreadStatusId?: Id<"unreadStatus">;
+  workspaceId: Id<"workspaces">;
 }
 
-export type GetMessagesReturnType = PaginationResult<
-  typeof api.messages.get._returnType
->;
-
 export const getUnreadStatus = ({
-  channelId,
   memberId,
+  channelId,
   conversationId,
-  unreadStatusId,
+  workspaceId,
 }: getUnreadStatusProps) => {
-  const { results, status, loadMore } = usePaginatedQuery(
-    api.messages.get as PaginatedQueryReference,
-    { channelId, memberId, conversationId, unreadStatusId },
-    { initialNumItems: BATCH_SIZE }
-  );
+  const data = useQuery(api.unreadStatus.getUnreadStatus, {
+    memberId,
+    channelId,
+    conversationId,
+    workspaceId,
+  });
+  const isLoading = data === undefined;
 
-  return {
-    results,
-    status,
-    loadMore: () => loadMore(BATCH_SIZE),
-  };
+  return { data, isLoading };
 };
