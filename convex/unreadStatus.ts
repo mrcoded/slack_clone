@@ -2,15 +2,12 @@ import { auth } from "./auth";
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 
-import { paginationOptsValidator } from "convex/server";
-
 export const getUnreadStatus = query({
   args: {
-    channelId: v.id("channels"),
+    channelId: v.optional(v.id("channels")),
     memberId: v.optional(v.id("members")),
-    workspaceId: v.optional(v.id("workspaces")),
+    workspaceId: v.id("workspaces"),
     conversationId: v.optional(v.id("conversations")),
-    paginationOpts: paginationOptsValidator,
   },
 
   handler: async (ctx, args) => {
@@ -20,13 +17,7 @@ export const getUnreadStatus = query({
       return [];
     }
 
-    const channel = await ctx.db.get(args.channelId);
-
-    if (!channel) {
-      return [];
-    }
-
-    const workspace = await ctx.db.get(channel.workspaceId);
+    const workspace = await ctx.db.get(args.workspaceId);
 
     if (!workspace) {
       return [];
@@ -43,34 +34,80 @@ export const getUnreadStatus = query({
       return [];
     }
 
-    // return unreadStatusId;
     const results = await ctx.db
       .query("unreadStatus")
-      .withIndex("by_member_id_channel_id_conversation_id", (q) =>
-        q
-          .eq("memberId", currentMember._id)
-          .eq("channelId", args.channelId)
-          .eq("conversationId", args.conversationId)
+      .withIndex("by_workspace_id", (q) =>
+        q.eq("workspaceId", args.workspaceId)
       )
-      .order("desc")
-      .paginate(args.paginationOpts);
-    console.log(results);
+      .collect();
 
-    return {
+    return results;
+  },
+});
+
+export const markChannelStatus = mutation({
+  args: {
+    channelId: v.id("channels"),
+  },
+
+  handler: async (ctx, args) => {
+    const userId = await auth.getUserId(ctx);
+
+    if (!userId) {
+      throw new Error("No user found");
+    }
+
+    const channel = await ctx.db.get(args.channelId);
+
+    if (!channel) {
+      throw new Error("No channel found");
+    }
+
+    const workspace = await ctx.db.get(channel.workspaceId);
+
+    if (!workspace) {
+      throw new Error("No workspace found");
+    }
+
+    const messages = await ctx.db.get(channel._id);
+    if (!messages) {
+      throw new Error("No messages found");
+    }
+
+    const currentMember = await ctx.db
+      .query("members")
+      .withIndex("by_workspace_id_user_id", (q) =>
+        q.eq("workspaceId", workspace._id).eq("userId", userId)
+      )
+      .unique();
+
+    if (!currentMember) {
+      throw new Error("No member found");
+    }
+
+    // Set unread to false for the specified user and channel
+    const results = await ctx.db
+      .query("unreadStatus")
+      .withIndex("by_channel_id", (q) => q.eq("channelId", channel._id))
+      .first();
+
+    if (!results) {
+      throw new Error("No results found");
+    }
+
+    // if (existingReadStatus) {
+    //   // If record exists, set unread to true
+    //   await ctx.db.patch(args.channelId, { ...status, unread: false });
+    // } else {
+    //   // If record doesn't exist, insert a new record with unread set to true
+    //   await ctx.db.patch({ unread: true });
+    // }
+
+    await ctx.db.patch(results._id, {
       ...results,
-      page: (
-        await Promise.all(
-          results.page.map(async (status) => {
-            return {
-              ...status,
-            };
-          })
-        )
-      ).filter(
-        (message): message is NonNullable<typeof message> => message !== null
-      ),
-    };
+      unread: false,
+    });
 
-    // return statusId;
+    return results._id;
   },
 });
