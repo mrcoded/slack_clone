@@ -1,9 +1,11 @@
 "use client";
 
 import React from "react";
-import { Loader, LogOut } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { useCurrentUser } from "@/lib/actions/use-current-user";
+
+import { Loading } from "@/components/loading";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -18,7 +20,7 @@ const UserButton = () => {
   const { data, isLoading } = useCurrentUser();
 
   if (isLoading) {
-    return <Loader className="size-4 animate-spn text-muted-foreground" />;
+    return <Loading />;
   }
 
   if (!data) {
@@ -32,7 +34,10 @@ const UserButton = () => {
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger className="outline-none relative">
-        <Avatar className="rounded-md size-10 hover:opacity-75 transition">
+        <Avatar
+          // onClick={}
+          className="rounded-md size-10 hover:opacity-75 transition"
+        >
           <AvatarImage className="rounded-md" alt={name} src={image} />
           <AvatarFallback className="rounded-md bg-sky-500 text-white">
             {avatarFallback}
