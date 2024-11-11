@@ -29,8 +29,6 @@ interface SidebarItemProps {
   link?: string;
   label: string;
   id: string;
-  status?: boolean;
-  markAsRead?: () => void;
   icon: LucideIcon | IconType;
   variant?: VariantProps<typeof sidebarItemVariants>["variant"];
 }
@@ -39,8 +37,6 @@ const SidebarItems = ({
   link,
   label,
   id,
-  status,
-  markAsRead,
   icon: Icon,
   variant,
 }: SidebarItemProps) => {
@@ -50,12 +46,7 @@ const SidebarItems = ({
     <Button
       variant="transparent"
       size="sm"
-      onClick={markAsRead}
-      className={cn(
-        sidebarItemVariants({ variant: variant }),
-        status === true && "font-extrabold text-white",
-        status === false && sidebarItemVariants({ variant: variant })
-      )}
+      className={cn(sidebarItemVariants({ variant: variant }))}
       asChild
     >
       <Link href={`/workspace/${workspaceId}/${link}`}>
