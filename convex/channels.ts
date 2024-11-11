@@ -113,18 +113,10 @@ export const create = mutation({
 
     const parsedName = args.name.replace(/\s+/g, "-").toLowerCase();
 
-    // Update unread statusId for channel admin
-    await ctx.db.patch(member.unreadStatusId, {
-      memberId: member._id,
-      workspaceId: args.workspaceId,
-      unread: false,
-    });
-
     const channelId = await ctx.db.insert("channels", {
       name: parsedName,
       workspaceId: args.workspaceId,
       memberId: member._id,
-      // unreadStatusId: statusId,
     });
 
     return channelId;

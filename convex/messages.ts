@@ -5,7 +5,7 @@ import { mutation, query, QueryCtx } from "./_generated/server";
 import { auth } from "./auth";
 import { Doc, Id } from "./_generated/dataModel";
 
-const getMember = async (
+export const getMember = async (
   ctx: QueryCtx,
   workspaceId: Id<"workspaces">,
   userId: Id<"users">
@@ -22,7 +22,7 @@ const populateUser = (ctx: QueryCtx, userId: Id<"users">) => {
   return ctx.db.get(userId);
 };
 
-const populateMember = (ctx: QueryCtx, memberId: Id<"members">) => {
+export const populateMember = (ctx: QueryCtx, memberId: Id<"members">) => {
   return ctx.db.get(memberId);
 };
 
@@ -69,7 +69,7 @@ const populateThreads = async (ctx: QueryCtx, messageId: Id<"messages">) => {
   return {
     count: messages.length,
     image: lastMessageUser?.image,
-    timeStamp: lastMessage._creationTime,
+    timestamp: lastMessage._creationTime,
     name: lastMessageUser?.name,
   };
 };
@@ -269,6 +269,7 @@ export const get = query({
 
             const reactions = await populateReactions(ctx, message._id);
             const threads = await populateThreads(ctx, message._id);
+
             const image = message.image
               ? await ctx.storage.getUrl(message.image)
               : undefined;
@@ -317,7 +318,7 @@ export const get = query({
               threadsCount: threads.count,
               threadsImage: threads.image,
               threadName: threads.name,
-              threadTimestamp: threads.timeStamp,
+              threadTimestamp: threads.timestamp,
             };
           })
         )

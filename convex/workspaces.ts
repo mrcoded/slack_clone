@@ -47,12 +47,6 @@ export const join = mutation({
       throw new Error("Already a member of this workspace");
     }
 
-    await ctx.db.insert("members", {
-      userId,
-      workspaceId: workspace._id,
-      role: "member",
-    });
-
     return workspace._id;
   },
 });
@@ -107,7 +101,7 @@ export const create = mutation({
       joinCode,
     });
 
-    await ctx.db.insert("members", {
+    const memberId = await ctx.db.insert("members", {
       userId,
       workspaceId,
       role: "admin",
@@ -116,6 +110,7 @@ export const create = mutation({
     await ctx.db.insert("channels", {
       name: "general",
       workspaceId,
+      memberId,
     });
 
     return workspaceId;
