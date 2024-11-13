@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Loader } from "lucide-react";
 
 import { Id } from "@/../convex/_generated/dataModel";
 import { differenceInMinutes, format, isToday, isYesterday } from "date-fns";
@@ -10,6 +9,8 @@ import useWorkspaceId from "@/hooks/use-workspace-id";
 import ChannelHero from "@/app/channels/_components/channel-hero";
 import ConversationHero from "@/app/workspace/[workspaceId]/member/[memberId]/_components/conversation-hero";
 import { getCurrentMember } from "@/app/members/actions/get-current-member.actions";
+
+import { Loading } from "@/components/loading";
 
 const TIME_THRESHOLD = 5;
 
@@ -43,9 +44,10 @@ const MessageList = ({
   isLoadingMore,
   canLoadMore,
 }: MessageListProps) => {
+  const workspaceId = useWorkspaceId();
+
   const [editingId, setEditingId] = useState<Id<"messages"> | null>(null);
 
-  const workspaceId = useWorkspaceId();
   const { data: currentMember } = getCurrentMember({ workspaceId });
 
   const groupedMessages = data?.reduce(
@@ -60,7 +62,7 @@ const MessageList = ({
       groups[dateKey].unshift(message);
       return groups;
     },
-    {} as Record<string, typeof data>
+    {} as Record<string, GetMessagesReturnType>
   );
 
   return (
@@ -91,7 +93,7 @@ const MessageList = ({
                 memberId={message.memberId}
                 authorImage={message.user.image}
                 authorName={message.user.name}
-                isAuthor={message.memberId === currentMember?._id}
+                isAuthor={message.memberId === currentMember?._id!}
                 reactions={message.reactions}
                 body={message.body}
                 image={message.image}
@@ -133,7 +135,7 @@ const MessageList = ({
         <div className="text-center my-2 relative">
           <hr className="absolute top-1/2 left-0 right-0 border-t border-gray-300" />
           <span className="relative inline-block bg-white px-4 py-1 rounded-full text-xs border-gray-300 shadow-sm">
-            <Loader className="size-4 animate-spin" />
+            <Loading />
           </span>
         </div>
       )}
