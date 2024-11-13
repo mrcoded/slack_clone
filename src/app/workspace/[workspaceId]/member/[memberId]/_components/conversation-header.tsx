@@ -26,7 +26,9 @@ const ConversationHeader = ({
       >
         <Avatar className="size-6 mr-2">
           <AvatarImage src={memberImage} />
-          <AvatarFallback>{avatarFallback}</AvatarFallback>
+          <AvatarFallback className="text-white text-xs">
+            {avatarFallback}
+          </AvatarFallback>
         </Avatar>
         <span className="truncate">{memberName}</span>
         <FaChevronDown className="size-2.5 ml-2" />
