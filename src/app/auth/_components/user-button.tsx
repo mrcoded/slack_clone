@@ -3,6 +3,7 @@
 import React from "react";
 import { LogOut } from "lucide-react";
 import { useAuthActions } from "@convex-dev/auth/react";
+
 import { useCurrentUser } from "@/lib/actions/use-current-user";
 
 import { Loading } from "@/components/loading";
@@ -34,10 +35,7 @@ const UserButton = () => {
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger className="outline-none relative">
-        <Avatar
-          // onClick={}
-          className="rounded-md size-10 hover:opacity-75 transition"
-        >
+        <Avatar className="rounded-md size-10 hover:opacity-75 transition">
           <AvatarImage className="rounded-md" alt={name} src={image} />
           <AvatarFallback className="rounded-md bg-sky-500 text-white">
             {avatarFallback}
@@ -46,7 +44,7 @@ const UserButton = () => {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="center" side="right" className="w-60">
         <DropdownMenuItem
-          className="h-10 cursor-pointer"
+          className="h-8 cursor-pointer"
           onClick={() => signOut()}
         >
           <LogOut className="size-4 mr-2" />
