@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { TriangleAlert } from "lucide-react";
 
@@ -31,6 +31,30 @@ const WorkspaceIdPage = () => {
     workspaceId,
   });
 
+  const [isSidebarVisible, setIsSidebarVisible] = useState(true);
+
+  // Hook to monitor window size and adjust sidebar visibility
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 640) {
+        setIsSidebarVisible(false); // Hide sidebar on small screens
+      } else {
+        setIsSidebarVisible(true); // Show sidebar on larger screens
+      }
+    };
+
+    handleResize(); // Initial check
+    window.addEventListener("resize", handleResize);
+
+    if (!isSidebarVisible) {
+      router.push(`/workspace/${workspaceId}/channel/${channelId}`);
+    }
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [window.innerWidth]);
+
   const channelId = useMemo(() => channels?.[0]?._id, [channels]);
   const isAdmin = useMemo(() => member?.role === "admin", [member?.role]);
 
@@ -44,9 +68,7 @@ const WorkspaceIdPage = () => {
     )
       return;
 
-    if (channelId) {
-      // router.push(`/workspace/${workspaceId}/channel/${channelId}`);
-    } else if (!isOpen && isAdmin) {
+    if (!isOpen && isAdmin) {
       setIsOpen(true);
     }
   }, [
@@ -78,12 +100,10 @@ const WorkspaceIdPage = () => {
     );
   }
 
-  return (
+  return isSidebarVisible ? (
     <WorkspaceSidebar />
-    //   <div className="h-full flex-1 flex items-center justify-center flex-col gap-2">
-    //     <TriangleAlert className="size-6 text-muted-foreground" />
-    //     <span className="text-sm text-muted-foreground">No channel found</span>
-    //   </div>
+  ) : (
+    <Loading style="flex-1 flex-col gap-y-2" />
   );
 };
 
