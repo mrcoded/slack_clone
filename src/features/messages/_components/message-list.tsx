@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 import { Id } from "@/../convex/_generated/dataModel";
 import { differenceInMinutes, format, isToday, isYesterday } from "date-fns";
-import { useGetMessagesReturnType } from "@/features/messages/actions/get-messages";
+import { GetMessagesReturnType } from "@/features/messages/actions/get-messages";
 
 import Message from "./message";
 import useWorkspaceId from "@/hooks/use-workspace-id";
@@ -20,7 +20,7 @@ interface MessageListProps {
   channelName?: string;
   channelCreationTime?: number;
   variant?: "channel" | "thread" | "conversation";
-  data: useGetMessagesReturnType | undefined;
+  data: GetMessagesReturnType | undefined;
   loadMore: () => void;
   isLoadingMore: boolean;
   canLoadMore: boolean;
@@ -62,7 +62,7 @@ const MessageList = ({
       groups[dateKey].unshift(message);
       return groups;
     },
-    {} as Record<string, useGetMessagesReturnType>
+    {} as Record<string, GetMessagesReturnType>
   );
 
   return (
