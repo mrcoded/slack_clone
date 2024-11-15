@@ -10,8 +10,8 @@ import { toast } from "sonner";
 
 import VerificationInput from "react-verification-input";
 import useWorkspaceId from "@/hooks/use-workspace-id";
-import { getWorkspaceInfo } from "@/app/workspace/[workspaceId]/actions/get-workspace-info";
-import { joinWorkspace } from "@/app/workspace/[workspaceId]/actions/join-workspace";
+import { useGetWorkspaceInfo } from "@/features/workspace/[workspaceId]/actions/get-workspace-info";
+import { useJoinWorkspace } from "@/features/workspace/[workspaceId]/actions/join-workspace";
 import { Loading } from "@/components/loading";
 
 import { Button } from "@/components/ui/button";
@@ -20,8 +20,8 @@ const JoinWorkspace = () => {
   const router = useRouter();
   const workspaceId = useWorkspaceId();
 
-  const { mutate, isPending } = joinWorkspace();
-  const { data, isLoading } = getWorkspaceInfo({ id: workspaceId });
+  const { mutate, isPending } = useJoinWorkspace();
+  const { data, isLoading } = useGetWorkspaceInfo({ id: workspaceId });
 
   const isMember = useMemo(() => data?.isMember, [data?.isMember]);
 
@@ -45,9 +45,7 @@ const JoinWorkspace = () => {
   };
 
   if (isLoading) {
-    return (
-    <Loading/>
-    );
+    return <Loading />;
   }
   return (
     <div className="h-full flex flex-col gap-y-8 items-center justify-center bg-white p-8 rounded-lg shadow-md">

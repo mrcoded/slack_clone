@@ -3,9 +3,9 @@ import { useRouter } from "next/navigation";
 import { Info, Search } from "lucide-react";
 
 import useWorkspaceId from "@/hooks/use-workspace-id";
-import { getChannels } from "../[workspaceId]/channel/[channelId]/actions/get-channels";
-import { getMembers } from "@/app/members/actions/get-members.actions";
-import { getWorkspace } from "@/app/workspace/[workspaceId]/actions/get-workspace";
+import { useGetChannels } from "@/features/channels/[channelId]/actions/get-channels";
+import { useGetMembers } from "@/features/members/[memberId]/actions/get-members.actions";
+import { useGetWorkspace } from "@/features/workspace/[workspaceId]/actions/get-workspace";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -23,9 +23,9 @@ const Toolbar = () => {
   const router = useRouter();
   const workspaceId = useWorkspaceId();
 
-  const { data } = getWorkspace({ id: workspaceId });
-  const { data: channels } = getChannels({ workspaceId });
-  const { data: members } = getMembers({ workspaceId });
+  const { data } = useGetWorkspace({ id: workspaceId });
+  const { data: channels } = useGetChannels({ workspaceId });
+  const { data: members } = useGetMembers({ workspaceId });
 
   const [open, setOpen] = useState(false);
 

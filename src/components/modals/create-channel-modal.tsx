@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { createChannel } from "@/app/workspace/[workspaceId]/channel/[channelId]/actions/create-channel";
+import { useCreateChannel } from "@/features/channels/[channelId]/actions/create-channel";
 
 const CreateChannelModal = () => {
   const router = useRouter();
@@ -17,7 +17,7 @@ const CreateChannelModal = () => {
   const [name, setName] = useState("");
   const [isOpen, setIsOpen] = useCreateChannelModal();
 
-  const { mutate, isPending } = createChannel();
+  const { mutate, isPending } = useCreateChannel();
 
   const handleClose = () => {
     setIsOpen(false);

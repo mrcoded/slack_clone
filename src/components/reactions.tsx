@@ -1,7 +1,7 @@
 import { Doc, Id } from "@/../convex/_generated/dataModel";
 
 import useWorkspaceId from "@/hooks/use-workspace-id";
-import { getCurrentMember } from "@/app/members/actions/get-current-member.actions";
+import { useGetCurrentMember } from "@/features/members/[memberId]/actions/get-current-member.actions";
 import { cn } from "@/lib/utils";
 import Hint from "./hint";
 import EmojiPopover from "./emoji-popover";
@@ -19,7 +19,7 @@ interface ReactionsProps {
 
 const Reactions = ({ data, onChange }: ReactionsProps) => {
   const workspaceId = useWorkspaceId();
-  const { data: currentMember } = getCurrentMember({ workspaceId });
+  const { data: currentMember } = useGetCurrentMember({ workspaceId });
 
   const currentMemberId = currentMember?._id;
 

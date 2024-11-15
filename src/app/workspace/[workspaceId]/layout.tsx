@@ -12,8 +12,8 @@ import Sidebar from "../shared/sidebar";
 import Thread from "@/components/thread";
 import { Loading } from "@/components/loading";
 
-import WorkspaceSidebar from "./_components/workspace-sidebar";
-import Profile from "../../members/_components/profile";
+import WorkspaceSidebar from "@/features/workspace/[workspaceId]/_components/workspace-sidebar";
+import Profile from "@/features/members/_components/profile";
 
 import {
   ResizableHandle,

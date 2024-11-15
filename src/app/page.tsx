@@ -3,7 +3,7 @@
 import { useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 
-import { useGetWorkspaces } from "@/lib/actions/use-get-workspaces";
+import { useGetWorkspaces } from "@/features/workspace/actions/use-get-workspaces";
 import { useCreateWorkspaceModal } from "../store/use-create-workspace";
 
 import { Loading } from "@/components/loading";

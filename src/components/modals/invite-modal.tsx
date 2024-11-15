@@ -3,7 +3,7 @@ import { CopyIcon, RefreshCcw } from "lucide-react";
 
 import useWorkspaceId from "@/hooks/use-workspace-id";
 import { useConfirm } from "@/hooks/use-confirm";
-import { updateJoinCode } from "@/app/workspace/[workspaceId]/actions/update-join-code";
+import { useUpdateJoinCode } from "@/features/workspace/[workspaceId]/actions/update-join-code";
 
 import { Button } from "../ui/button";
 import { toast } from "sonner";
@@ -35,7 +35,7 @@ const InviteModal = ({
     "This action will deactivate the current invite code and generate a new one."
   );
 
-  const { mutate, isPending } = updateJoinCode();
+  const { mutate, isPending } = useUpdateJoinCode();
 
   const handleNewCode = async () => {
     const ok = await confirm();

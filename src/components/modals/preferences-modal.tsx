@@ -4,7 +4,8 @@ import { TrashIcon } from "lucide-react";
 
 import { useConfirm } from "@/hooks/use-confirm";
 import useWorkspaceId from "@/hooks/use-workspace-id";
-import { removeWorkspace } from "@/app/workspace/[workspaceId]/actions/remove-workspace";
+import { useRemoveWorkspace } from "@/features/workspace/[workspaceId]/actions/remove-workspace";
+import { useUpdateWorkspace } from "@/features/workspace/[workspaceId]/actions/update-workspace";
 
 import { toast } from "sonner";
 import { Input } from "../ui/input";
@@ -18,7 +19,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import { updateWorkspace } from "@/app/workspace/[workspaceId]/actions/update-workspace";
 
 interface PreferencesModalProps {
   isOpen: boolean;
@@ -43,10 +43,10 @@ const PreferencesModal = ({
   const [editOpen, setEditOpen] = useState(false);
 
   const { mutate: updatingWorkspace, isPending: isUpdatingWorkspace } =
-    updateWorkspace();
+    useUpdateWorkspace();
 
   const { mutate: removingWorkspace, isPending: isRemovingWorkspace } =
-    removeWorkspace();
+    useRemoveWorkspace();
 
   const handleRemove = async () => {
     const ok = await confirm();

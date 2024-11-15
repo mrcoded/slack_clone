@@ -11,15 +11,15 @@ import { Id } from "@/../convex/_generated/dataModel";
 import useWorkspaceId from "@/hooks/use-workspace-id";
 import useChannelId from "@/hooks/use-channel-id";
 
-import Message from "@/app/messages/_components/message";
-import { getMessage } from "@/app/messages/actions/get-message";
-import { getCurrentMember } from "@/app/members/actions/get-current-member.actions";
-import { createMessage } from "@/app/messages/actions/create-message";
+import Message from "@/features/messages/_components/message";
+import { useGetMessage } from "@/features/messages/actions/get-message";
+import { useGetCurrentMember } from "@/features/members/[memberId]/actions/get-current-member.actions";
+import { useCreateMessage } from "@/features/messages/actions/create-message";
 import {
-  getMessages,
+  useGetMessages,
   GetMessagesReturnType,
-} from "@/app/messages/actions/get-messages";
-import { generateUploadUrl } from "@/app/upload/actions/generate-upload-url";
+} from "@/features/messages/actions/get-messages";
+import { useGenerateUploadUrl } from "@/features/upload/actions/generate-upload-url";
 
 import { Button } from "./ui/button";
 import { Loading } from "./loading";
@@ -53,14 +53,14 @@ const Thread = ({ messageId, onClose }: ThreadProps) => {
 
   const editorRef = useRef<Quill | null>(null);
 
-  const { mutate: creatingMessage } = createMessage();
-  const { mutate: generatingUploadUrl } = generateUploadUrl();
+  const { mutate: creatingMessage } = useCreateMessage();
+  const { mutate: generatingUploadUrl } = useGenerateUploadUrl();
 
-  const { data: currentMember } = getCurrentMember({ workspaceId });
-  const { data: message, isLoading: loadingMessage } = getMessage({
+  const { data: currentMember } = useGetCurrentMember({ workspaceId });
+  const { data: message, isLoading: loadingMessage } = useGetMessage({
     id: messageId,
   });
-  const { results, status, loadMore } = getMessages({
+  const { results, status, loadMore } = useGetMessages({
     channelId,
     parentMessageId: messageId,
   });

@@ -6,7 +6,7 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { toast } from "sonner";
 
-import { useCreateWorkspaces } from "@/lib/actions/use-create-workspaces";
+import { useCreateWorkspaces } from "@/features/workspace/actions/use-create-workspaces";
 import { useCreateWorkspaceModal } from "@/store/use-create-workspace";
 
 const CreateWorkspaceModal = () => {

@@ -5,13 +5,13 @@ import { TriangleAlert } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 import useChannelId from "@/hooks/use-channel-id";
-import { getChannel } from "./actions/get-channel";
-import { getMessages } from "@/app/messages/actions/get-messages";
+import { useGetChannel } from "@/features/channels/[channelId]/actions/get-channel";
+import { useGetMessages } from "@/features/messages/actions/get-messages";
 
 import { Loading } from "@/components/loading";
-import ChannelHeader from "./_components/channel-header";
-import { ChatInput } from "./_components/chat-input";
-import MessageList from "@/app/messages/_components/message-list";
+import ChannelHeader from "@/features/channels/[channelId]/_components/channel-header";
+import { ChatInput } from "@/features/channels/[channelId]/_components/chat-input";
+import MessageList from "@/features/messages/_components/message-list";
 
 const ChannelIdPage = () => {
   const params = useSearchParams();
@@ -20,9 +20,9 @@ const ChannelIdPage = () => {
   const isActiveThread = params.get("threadId");
   const isActiveProfile = params.get("profileId");
 
-  const { results, status, loadMore } = getMessages({ channelId });
+  const { results, status, loadMore } = useGetMessages({ channelId });
 
-  const { data: channel, isLoading: channelLoading } = getChannel({
+  const { data: channel, isLoading: channelLoading } = useGetChannel({
     id: channelId,
   });
 

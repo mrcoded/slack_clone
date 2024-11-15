@@ -7,10 +7,10 @@ import { TriangleAlert } from "lucide-react";
 import useWorkspaceId from "@/hooks/use-workspace-id";
 import { useCreateChannelModal } from "@/store/use-create-channel";
 
-import { getWorkspace } from "./actions/get-workspace";
-import { getCurrentMember } from "@/app/members/actions/get-current-member.actions";
-import { getChannels } from "./channel/[channelId]/actions/get-channels";
-import WorkspaceSidebar from "./_components/workspace-sidebar";
+import { useGetWorkspace } from "@/features/workspace/[workspaceId]/actions/get-workspace";
+import { useGetCurrentMember } from "@/features/members/[memberId]/actions/get-current-member.actions";
+import { useGetChannels } from "@/features/channels/[channelId]/actions/get-channels";
+import WorkspaceSidebar from "@/features/workspace/[workspaceId]/_components/workspace-sidebar";
 
 import { Loading } from "@/components/loading";
 
@@ -19,15 +19,15 @@ const WorkspaceIdPage = () => {
   const workspaceId = useWorkspaceId();
   const [isOpen, setIsOpen] = useCreateChannelModal();
 
-  const { data: member, isLoading: memberLoading } = getCurrentMember({
+  const { data: member, isLoading: memberLoading } = useGetCurrentMember({
     workspaceId,
   });
 
-  const { data: workspace, isLoading: workspaceLoading } = getWorkspace({
+  const { data: workspace, isLoading: workspaceLoading } = useGetWorkspace({
     id: workspaceId,
   });
 
-  const { data: channels, isLoading: channelsLoading } = getChannels({
+  const { data: channels, isLoading: channelsLoading } = useGetChannels({
     workspaceId,
   });
 
@@ -53,7 +53,7 @@ const WorkspaceIdPage = () => {
     return () => {
       window.removeEventListener("resize", handleResize);
     };
-  }, [window.innerWidth]);
+  }, []);
 
   const channelId = useMemo(() => channels?.[0]?._id, [channels]);
   const isAdmin = useMemo(() => member?.role === "admin", [member?.role]);

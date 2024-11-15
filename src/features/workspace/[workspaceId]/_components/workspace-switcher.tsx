@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 import { Plus } from "lucide-react";
 
 import useWorkspaceId from "@/hooks/use-workspace-id";
-import { getWorkspace } from "@/features/workspace/[workspaceId]/actions/get-workspace";
+import { useGetWorkspace } from "@/features/workspace/[workspaceId]/actions/get-workspace";
 import { useGetWorkspaces } from "@/features/workspace/actions/use-get-workspaces";
 import { Loading } from "@/components/loading";
 
@@ -22,7 +22,7 @@ const WorkspaceSwitcher = () => {
   const workspaceId = useWorkspaceId();
   const [_isOpen, setIsOpen] = useCreateWorkspaceModal();
 
-  const { data: workspace, isLoading: workspaceLoading } = getWorkspace({
+  const { data: workspace, isLoading: workspaceLoading } = useGetWorkspace({
     id: workspaceId,
   });
   const { data: workspaces, isLoading: workspacesLoading } = useGetWorkspaces();

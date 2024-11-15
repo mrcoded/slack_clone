@@ -8,8 +8,8 @@ import { toast } from "sonner";
 import useMemberId from "@/hooks/use-member";
 import useWorkspaceId from "@/hooks/use-workspace-id";
 
-import { createOrGetConversation } from "@/api/conversations/create-or-get-conversation";
-import Conversation from "./_components/conversation";
+import { useCreateOruseGetConversation } from "@/features/conversations/actions/create-or-get-conversation";
+import Conversation from "@/features/members/[memberId]/_components/conversation";
 
 import { Loading } from "@/components/loading";
 
@@ -20,7 +20,7 @@ const MemberIdPage = () => {
   const [conversationId, setConversationId] =
     useState<Id<"conversations"> | null>(null);
 
-  const { mutate, isPending } = createOrGetConversation();
+  const { mutate, isPending } = useCreateOruseGetConversation();
 
   useEffect(() => {
     mutate(
@@ -40,9 +40,7 @@ const MemberIdPage = () => {
   }, [memberId, workspaceId, mutate]);
 
   if (isPending) {
-    return (
-      <Loading style="flex-col gap-y-2"/>
-    );
+    return <Loading style="flex-col gap-y-2" />;
   }
 
   if (!conversationId) {
