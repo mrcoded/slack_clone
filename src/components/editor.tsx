@@ -95,7 +95,7 @@ const InputEditor = ({
 
                 if (isEmpty) return;
 
-                const body = JSON.stringify(quill.useGetContents());
+                const body = JSON.stringify(quill.getContents());
                 submitRef.current?.({ body, image: addedImage });
               },
             },
@@ -244,7 +244,7 @@ const InputEditor = ({
                 disabled={disabled || isEmpty}
                 onClick={() => {
                   onSubmit({
-                    body: JSON.stringify(quillRef.current?.useGetContents()),
+                    body: JSON.stringify(quillRef.current?.getContents()),
                     image,
                   });
                 }}
@@ -260,7 +260,7 @@ const InputEditor = ({
               disabled={disabled || isEmpty}
               onClick={() => {
                 onSubmit({
-                  body: JSON.stringify(quillRef.current?.useGetContents()),
+                  body: JSON.stringify(quillRef.current?.getContents()),
                   image,
                 });
               }}
