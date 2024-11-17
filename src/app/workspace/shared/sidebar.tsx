@@ -1,14 +1,22 @@
 import React from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Bell, Home, MessageSquare, MoreHorizontal } from "lucide-react";
 
+import useWorkspaceId from "@/hooks/use-workspace-id";
 import UserButton from "@/features/auth/_components/user-button";
 
 import WorkspaceSwitcher from "@/features/workspace/[workspaceId]/_components/workspace-switcher";
 import SidebarButton from "@/features/workspace/[workspaceId]/_components/sidebar-button";
 
 const Sidebar = () => {
+  const router = useRouter();
   const pathname = usePathname();
+  const workspaceId = useWorkspaceId();
+  const url = `/workspace/${workspaceId}`;
+
+  const handleClick = () => {
+    router.push(url);
+  };
 
   return (
     <aside className="w-[70px] h-full bg-[#481349] flex flex-col gap-y-4 items-center pt-[9px] pb-4">
@@ -16,6 +24,7 @@ const Sidebar = () => {
       <SidebarButton
         icon={Home}
         label="Home"
+        onClick={handleClick}
         isActive={pathname.includes("/workspace")}
       />
       <SidebarButton icon={MessageSquare} label="DMs" />
