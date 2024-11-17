@@ -19,6 +19,9 @@ const WorkspaceIdPage = () => {
   const workspaceId = useWorkspaceId();
   const [isOpen, setIsOpen] = useCreateChannelModal();
 
+  const [windowWidth, setWindowWidth] = useState(0);
+  const [isSidebarVisible, setIsSidebarVisible] = useState(true);
+
   const { data: member, isLoading: memberLoading } = useGetCurrentMember({
     workspaceId,
   });
@@ -31,32 +34,36 @@ const WorkspaceIdPage = () => {
     workspaceId,
   });
 
-  const [isSidebarVisible, setIsSidebarVisible] = useState(true);
+  const channelId = useMemo(() => channels?.[0]?._id, [channels]);
+  const isAdmin = useMemo(() => member?.role === "admin", [member?.role]);
 
   // Hook to monitor window size and adjust sidebar visibility
   useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth > 640) {
-        setIsSidebarVisible(false); // Hide sidebar on small screens
-      } else {
-        setIsSidebarVisible(true); // Show sidebar on larger screens
+    // Check if the code is running in the browser
+    if (typeof window !== "undefined") {
+      const handleResize = () => {
+        const currentWidth = window.innerWidth;
+        setWindowWidth(currentWidth);
+
+        if (window.innerWidth > 640) {
+          setIsSidebarVisible(false); // Hide sidebar on large screens
+        } else {
+          setIsSidebarVisible(true); // Show sidebar on small screens
+        }
+      };
+
+      handleResize(); // Initial check
+      window.addEventListener("resize", handleResize);
+
+      if (!isSidebarVisible && channelId) {
+        router.push(`/workspace/${workspaceId}/channel/${channelId}`);
       }
-    };
 
-    handleResize(); // Initial check
-    window.addEventListener("resize", handleResize);
-
-    if (!isSidebarVisible) {
-      router.push(`/workspace/${workspaceId}/channel/${channelId}`);
+      return () => {
+        window.removeEventListener("resize", handleResize);
+      };
     }
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
-
-  const channelId = useMemo(() => channels?.[0]?._id, [channels]);
-  const isAdmin = useMemo(() => member?.role === "admin", [member?.role]);
+  }, [windowWidth, isSidebarVisible]);
 
   useEffect(() => {
     if (
@@ -87,6 +94,10 @@ const WorkspaceIdPage = () => {
 
   if (workspaceLoading || channelsLoading || memberLoading) {
     return <Loading style="flex-1 flex-col gap-y-2" />;
+  }
+
+  if (channelId) {
+    setIsOpen(false);
   }
 
   if (!workspace || !member) {
