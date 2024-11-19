@@ -26,7 +26,13 @@ const JoinWorkspace = () => {
   const isMember = useMemo(() => data?.isMember, [data?.isMember]);
 
   useEffect(() => {
-    router.push(`/workspace/${workspaceId}`);
+    if (isMember) {
+      const timer = setTimeout(() => {
+        router.push(`/workspace/${workspaceId}`);
+      }, 2000);
+
+      return () => clearTimeout(timer);
+    }
   }, [isMember, router, workspaceId]);
 
   const handleComplete = (value: string) => {
