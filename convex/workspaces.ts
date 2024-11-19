@@ -47,6 +47,12 @@ export const join = mutation({
       throw new Error("Already a member of this workspace");
     }
 
+    await ctx.db.insert("members", {
+      userId,
+      workspaceId: workspace._id,
+      role: "member",
+    });
+
     return workspace._id;
   },
 });
