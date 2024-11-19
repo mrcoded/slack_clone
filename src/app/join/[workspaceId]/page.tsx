@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -47,6 +47,7 @@ const JoinWorkspace = () => {
   if (isLoading) {
     return <Loading />;
   }
+
   return (
     <div className="h-full flex flex-col gap-y-8 items-center justify-center bg-white p-8 rounded-lg shadow-md">
       <Image src="/hashnew.jpg" width={60} height={60} alt="logo" />
