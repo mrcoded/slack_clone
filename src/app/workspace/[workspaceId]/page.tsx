@@ -63,7 +63,7 @@ const WorkspaceIdPage = () => {
         window.removeEventListener("resize", handleResize);
       };
     }
-  }, [windowWidth, isSidebarVisible]);
+  }, [windowWidth, isSidebarVisible, channelId]);
 
   useEffect(() => {
     if (
@@ -92,12 +92,14 @@ const WorkspaceIdPage = () => {
     workspaceId,
   ]);
 
+  useEffect(() => {
+    if (channelId) {
+      setIsOpen(false);
+    }
+  }, [channelId, setIsOpen]);
+
   if (workspaceLoading || channelsLoading || memberLoading) {
     return <Loading style="flex-1 flex-col gap-y-2" />;
-  }
-
-  if (channelId) {
-    setIsOpen(false);
   }
 
   if (!workspace || !member) {
