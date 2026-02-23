@@ -44,7 +44,7 @@ const ChannelIdPage = () => {
       className={cn(
         "flex flex-col h-full",
         isActiveThread && "hidden md:flex",
-        isActiveProfile && "hidden md:flex"
+        isActiveProfile && "hidden md:flex",
       )}
     >
       <ChannelHeader title={channel.name} />

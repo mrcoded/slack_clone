@@ -1,7 +1,13 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "../ui/dialog";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { toast } from "sonner";
@@ -33,13 +39,13 @@ const CreateWorkspaceModal = () => {
           router.push(`/workspace/${id}`);
           handleClose();
         },
-      }
+      },
     );
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent>
+      <DialogContent aria-describedby={"create workspace modal"}>
         <DialogHeader>
           <DialogTitle>Add a workspace</DialogTitle>
         </DialogHeader>

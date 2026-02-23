@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { useToggle } from "react-use";
 import { FaCaretDown } from "react-icons/fa";

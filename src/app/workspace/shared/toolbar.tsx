@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Info, Search } from "lucide-react";
@@ -54,7 +56,11 @@ const Toolbar = () => {
           <span className="text-white text-xs">Search {data?.name}</span>
         </Button>
 
-        <CommandDialog open={open} onOpenChange={setOpen}>
+        <CommandDialog
+          open={open}
+          onOpenChange={setOpen}
+          aria-describedby={undefined}
+        >
           <CommandInput placeholder="Type a command or search..." />
           <CommandList>
             <CommandEmpty>No results found.</CommandEmpty>

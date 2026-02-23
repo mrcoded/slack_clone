@@ -8,8 +8,8 @@ import { useRemoveWorkspace } from "@/features/workspace/[workspaceId]/actions/r
 import { useUpdateWorkspace } from "@/features/workspace/[workspaceId]/actions/update-workspace";
 
 import { toast } from "sonner";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogClose,
@@ -18,7 +18,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "../ui/dialog";
+} from "@/components/ui/dialog";
 
 interface PreferencesModalProps {
   isOpen: boolean;
@@ -36,7 +36,7 @@ const PreferencesModal = ({
 
   const [ConfirmDialog, confirm] = useConfirm(
     "Are you sure?",
-    "This action is irreversible."
+    "This action is irreversible.",
   );
 
   const [value, setValue] = useState(initialValue);
@@ -65,7 +65,7 @@ const PreferencesModal = ({
         onError() {
           toast.error("Failed to remove workspace");
         },
-      }
+      },
     );
   };
 
@@ -85,7 +85,7 @@ const PreferencesModal = ({
         onError() {
           toast.error("Failed to update workspace");
         },
-      }
+      },
     );
   };
 
@@ -94,7 +94,10 @@ const PreferencesModal = ({
       <ConfirmDialog />
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="p-0 bg-gray-50 overflow-hidden">
+        <DialogContent
+          className="p-0 bg-gray-50 overflow-hidden"
+          aria-describedby={undefined}
+        >
           <DialogHeader className="p-4 border-b bg-white">
             <DialogTitle>{value}</DialogTitle>
           </DialogHeader>

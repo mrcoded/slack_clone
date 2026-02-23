@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 
-import data from "@emoji-mart/data";
-import Picker from "@emoji-mart/react";
 import EmojiPicker, { type EmojiClickData } from "emoji-picker-react";
 
 import {
@@ -9,8 +7,12 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "./ui/tooltip";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+} from "@/components/ui/tooltip";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 interface EmojiPopoverProps {
   children: React.ReactNode;

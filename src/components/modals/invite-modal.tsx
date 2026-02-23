@@ -32,7 +32,7 @@ const InviteModal = ({
   const workspaceId = useWorkspaceId();
   const [ConfirmDialog, confirm] = useConfirm(
     "Are you sure?",
-    "This action will deactivate the current invite code and generate a new one."
+    "This action will deactivate the current invite code and generate a new one.",
   );
 
   const { mutate, isPending } = useUpdateJoinCode();
@@ -51,7 +51,7 @@ const InviteModal = ({
         onError: () => {
           toast.error("Unable to generate new invite code.");
         },
-      }
+      },
     );
   };
 
@@ -66,7 +66,7 @@ const InviteModal = ({
     <>
       <ConfirmDialog />
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent>
+        <DialogContent aria-describedby={"invite modal"}>
           <DialogHeader>
             <DialogTitle>Invite people to {name}</DialogTitle>
             <DialogDescription>

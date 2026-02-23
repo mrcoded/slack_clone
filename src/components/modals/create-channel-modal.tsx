@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -5,9 +7,14 @@ import useWorkspaceId from "@/hooks/use-workspace-id";
 import { useCreateChannelModal } from "@/store/use-create-channel";
 
 import { toast } from "sonner";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { useCreateChannel } from "@/features/channels/[channelId]/actions/create-channel";
 
 const CreateChannelModal = () => {
@@ -43,13 +50,13 @@ const CreateChannelModal = () => {
         onError: () => {
           toast.error("Failed to create channel");
         },
-      }
+      },
     );
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent>
+      <DialogContent aria-describedby={undefined}>
         <DialogHeader>
           <DialogTitle>Add a channel</DialogTitle>
         </DialogHeader>
