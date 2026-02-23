@@ -4,16 +4,17 @@ import React from "react";
 import { useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 
+import { useWindowSize } from "react-use";
 import { Id } from "@/../convex/_generated/dataModel";
-import { usePanel } from "@/hooks/use-panel";
-import Toolbar from "../shared/toolbar";
-import Sidebar from "../shared/sidebar";
 
+import { usePanel } from "@/hooks/use-panel";
 import Thread from "@/components/thread";
 import { Loading } from "@/components/loading";
+import Toolbar from "@/app/workspace/shared/toolbar";
+import Sidebar from "@/app/workspace/shared/sidebar";
 
-import WorkspaceSidebar from "@/features/workspace/[workspaceId]/_components/workspace-sidebar";
 import Profile from "@/features/members/_components/profile";
+import WorkspaceSidebar from "@/features/workspace/[workspaceId]/_components/workspace-sidebar";
 
 import {
   ResizableHandle,
@@ -27,6 +28,8 @@ interface WorkspaceIdLayoutProps {
 
 const WorkspaceIdLayout = ({ children }: WorkspaceIdLayoutProps) => {
   const params = useSearchParams();
+  const { width } = useWindowSize();
+  const isMobile = width < 556;
 
   const isActiveThread = params.get("threadId");
   const isActiveProfile = params.get("profileId");
@@ -36,29 +39,30 @@ const WorkspaceIdLayout = ({ children }: WorkspaceIdLayoutProps) => {
   const showPanel = !!threadId || !!profileId;
 
   return (
-    <div className="h-full">
+    <div className="h-full flex flex-col">
       <Toolbar />
       <div className="flex h-[calc(100vh-40px)]">
         <Sidebar />
         <ResizablePanelGroup
-          direction="horizontal"
-          autoSaveId="ca-workspace-layout"
+          orientation="horizontal"
+          autoSave="ca-workspace-layout"
         >
+          {!isMobile && (
+            <ResizablePanel
+              defaultSize="20"
+              minSize="11"
+              className="bg-[#5E2C5F] hidden sm:flex"
+            >
+              <WorkspaceSidebar />
+            </ResizablePanel>
+          )}
+          <ResizableHandle withHandle className="hidden sm:flex" />
           <ResizablePanel
-            defaultSize={20}
-            minSize={11}
-            className="bg-[#5E2C5F] hidden sm:block"
-          >
-            <WorkspaceSidebar />
-            <div>Channels Sidebar</div>
-          </ResizablePanel>
-          <ResizableHandle withHandle className="hidden md:flex" />
-          <ResizablePanel
-            minSize={20}
-            defaultSize={80}
+            minSize="20"
+            defaultSize="80"
             className={cn(
               isActiveThread && "hidden md:flex",
-              isActiveProfile && "hidden md:flex"
+              isActiveProfile && "hidden md:flex",
             )}
           >
             {children}
@@ -69,10 +73,10 @@ const WorkspaceIdLayout = ({ children }: WorkspaceIdLayoutProps) => {
                 withHandle
                 className={cn(
                   isActiveThread && "hidden md:flex",
-                  isActiveProfile && "hidden md:flex"
+                  isActiveProfile && "hidden md:flex",
                 )}
               />
-              <ResizablePanel minSize={20} defaultSize={29}>
+              <ResizablePanel minSize="20" defaultSize="29">
                 {threadId ? (
                   <Thread
                     messageId={threadId as Id<"messages">}
