@@ -1,9 +1,12 @@
-import React, { useState } from "react";
-import { FcGoogle } from "react-icons/fc";
-import { FaGithub } from "react-icons/fa";
-import { TriangleAlert } from "lucide-react";
+"use client";
 
-import { AuthFlow } from "../../../app/auth/types";
+import React, { useState } from "react";
+import { TriangleAlert } from "lucide-react";
+import { useAuthActions } from "@convex-dev/auth/react";
+
+import { AuthCardProps } from "@/app/auth/types";
+import AuthOptions from "./auth-options";
+
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,19 +17,16 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { useAuthActions } from "@convex-dev/auth/react";
+import PasswordVisibility from "./password-visibility";
 
-interface SignInCardProps {
-  setState: (state: AuthFlow) => void;
-}
-
-export const SignInCard = ({ setState }: SignInCardProps) => {
+export const SignInCard = ({ setState }: AuthCardProps) => {
   const { signIn } = useAuthActions();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const onPasswordSignIn = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -75,43 +75,32 @@ export const SignInCard = ({ setState }: SignInCardProps) => {
             type="email"
             required
           />
-          <Input
-            disabled={pending}
-            value={password}
-            onChange={(e) => {
-              setPassword(e.target.value);
-            }}
-            placeholder="Password"
-            type="password"
-            required
-          />
+          <div className="relative flex flex-col space-y-1.5">
+            <Input
+              disabled={pending}
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+              }}
+              placeholder="Password"
+              type={showPassword ? "text" : "password"}
+              required
+            />
+            <PasswordVisibility
+              showPassword={showPassword}
+              setShowPassword={setShowPassword}
+            />
+          </div>
           <Button type="submit" className="w-full" size="lg" disabled={pending}>
             Continue
           </Button>
         </form>
         <Separator />
-        <div className="flex flex-col gap-y-2.5">
-          <Button
-            disabled={pending}
-            onClick={() => handleProviderSignIn("google")}
-            variant="outline"
-            size="lg"
-            className="w-full relative"
-          >
-            <FcGoogle className="size-5 absolute top-3 left-2.5" /> Continue
-            with Google
-          </Button>
-          <Button
-            disabled={pending}
-            onClick={() => handleProviderSignIn("github")}
-            variant="outline"
-            size="lg"
-            className="w-full relative"
-          >
-            <FaGithub className="size-5 absolute top-3 left-2.5" /> Continue
-            with Github
-          </Button>
-        </div>
+        {/* // Provider sign in options */}
+        <AuthOptions
+          pending={pending}
+          handleProviderAction={handleProviderSignIn}
+        />
         <p className="text-xs text-muted-foreground">
           Don`&apos;`t have an account?{" "}
           <span

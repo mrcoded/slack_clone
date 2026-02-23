@@ -1,7 +1,16 @@
+"use client";
+
 import React, { useState } from "react";
-import { FcGoogle } from "react-icons/fc";
-import { FaGithub } from "react-icons/fa";
 import { TriangleAlert } from "lucide-react";
+
+import { useQuery } from "convex/react";
+import { api } from "@/../convex/_generated/api";
+import { useAuthActions } from "@convex-dev/auth/react";
+
+import AuthOptions from "./auth-options";
+import PasswordVisibility from "./password-visibility";
+
+import { AuthCardProps } from "@/app/auth/types";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -13,29 +22,31 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { AuthFlow } from "../../../app/auth/types";
-import { useAuthActions } from "@convex-dev/auth/react";
 
-interface SignUpCardProps {
-  setState: (state: AuthFlow) => void;
-}
-
-export const SignUpCard = ({ setState }: SignUpCardProps) => {
+export const SignUpCard = ({ setState }: AuthCardProps) => {
   const { signIn } = useAuthActions();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-
   const [error, setError] = useState("");
+  const [password, setPassword] = useState("");
   const [pending, setPending] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+
+  // Check if email already exists
+  const emailExists = useQuery(api.users.checkEmailExists, { email });
 
   const onPasswordSignUp = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
       setError("Passwords do not match");
+      return;
+    }
+    // If emailExists, return
+    if (emailExists) {
+      setError("User already exists, please sign in.");
       return;
     }
 
@@ -93,53 +104,48 @@ export const SignUpCard = ({ setState }: SignUpCardProps) => {
             type="email"
             required
           />
-          <Input
-            disabled={pending}
-            value={password}
-            onChange={(e) => {
-              setPassword(e.target.value);
-            }}
-            placeholder="Password"
-            type="password"
-            required
-          />
-          <Input
-            disabled={pending}
-            value={confirmPassword}
-            onChange={(e) => {
-              setConfirmPassword(e.target.value);
-            }}
-            placeholder="Confirm password"
-            type="password"
-            required
-          />
+          <div className="relative flex flex-col space-y-1.5">
+            <Input
+              disabled={pending}
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+              }}
+              placeholder="Password"
+              type={showPassword ? "text" : "password"}
+              required
+            />
+            <PasswordVisibility
+              showPassword={showPassword}
+              setShowPassword={setShowPassword}
+            />
+          </div>
+          <div className="relative flex flex-col space-y-1.5">
+            <Input
+              disabled={pending}
+              value={confirmPassword}
+              onChange={(e) => {
+                setConfirmPassword(e.target.value);
+              }}
+              placeholder="Confirm password"
+              type={showPassword ? "text" : "password"}
+              required
+            />
+            <PasswordVisibility
+              showPassword={showPassword}
+              setShowPassword={setShowPassword}
+            />
+          </div>
           <Button type="submit" className="w-full" size="lg" disabled={pending}>
             Continue
           </Button>
         </form>
         <Separator />
-        <div className="flex flex-col gap-y-2.5">
-          <Button
-            disabled={pending}
-            onClick={() => handleProviderSignUp("google")}
-            variant="outline"
-            size="lg"
-            className="w-full relative"
-          >
-            <FcGoogle className="size-5 absolute top-3 left-2.5" /> Continue
-            with Google
-          </Button>
-          <Button
-            disabled={pending}
-            onClick={() => handleProviderSignUp("github")}
-            variant="outline"
-            size="lg"
-            className="w-full relative"
-          >
-            <FaGithub className="size-5 absolute top-3 left-2.5" /> Continue
-            with Github
-          </Button>
-        </div>
+        {/* // Provider sign up options */}
+        <AuthOptions
+          pending={pending}
+          handleProviderAction={handleProviderSignUp}
+        />
         <p className="text-xs text-muted-foreground">
           Already have an account?{" "}
           <span
