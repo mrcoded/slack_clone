@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { usePathname } from "next/navigation";
 import {
@@ -72,7 +74,7 @@ const WorkspaceSidebar = () => {
     <div
       className={cn(
         "flex flex-col bg-black/75 sm:bg-[#5E2C5F] h-full",
-        isActiveChannel && "hidden sm:flex"
+        isActiveChannel && "hidden sm:flex",
       )}
     >
       <WorkspaceHeader
