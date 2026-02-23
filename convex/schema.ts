@@ -4,6 +4,12 @@ import { v } from "convex/values";
 
 const schema = defineSchema({
   ...authTables,
+  users: defineTable({
+    name: v.string(),
+    email: v.string(),
+    image: v.optional(v.string()),
+    emailVerificationTime: v.optional(v.number()),
+  }).index("by_email", ["email"]),
   workspaces: defineTable({
     name: v.string(),
     userId: v.id("users"),
