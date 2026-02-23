@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 
-import { auth } from "./auth";
+import { getAuthUserId } from "@convex-dev/auth/server";
 import { mutation, query, QueryCtx } from "./_generated/server";
 import { Id } from "./_generated/dataModel";
 
@@ -11,7 +11,7 @@ const populateUser = (ctx: QueryCtx, id: Id<"users">) => {
 export const getById = query({
   args: { id: v.id("members") },
   handler: async (ctx, args) => {
-    const userId = await auth.getUserId(ctx);
+    const userId = await getAuthUserId(ctx);
 
     if (!userId) {
       return null;
@@ -26,7 +26,7 @@ export const getById = query({
     const currentMember = await ctx.db
       .query("members")
       .withIndex("by_workspace_id_user_id", (q) =>
-        q.eq("workspaceId", member.workspaceId).eq("userId", userId)
+        q.eq("workspaceId", member.workspaceId).eq("userId", userId),
       );
 
     if (!currentMember) {
@@ -49,7 +49,7 @@ export const getById = query({
 export const get = query({
   args: { workspaceId: v.id("workspaces") },
   handler: async (ctx, args) => {
-    const userId = await auth.getUserId(ctx);
+    const userId = await getAuthUserId(ctx);
 
     if (!userId) {
       return [];
@@ -58,7 +58,7 @@ export const get = query({
     const member = await ctx.db
       .query("members")
       .withIndex("by_workspace_id_user_id", (q) =>
-        q.eq("workspaceId", args.workspaceId).eq("userId", userId)
+        q.eq("workspaceId", args.workspaceId).eq("userId", userId),
       )
       .unique();
 
@@ -69,7 +69,7 @@ export const get = query({
     const data = await ctx.db
       .query("members")
       .withIndex("by_workspace_id", (q) =>
-        q.eq("workspaceId", args.workspaceId)
+        q.eq("workspaceId", args.workspaceId),
       )
       .collect();
 
@@ -93,7 +93,7 @@ export const get = query({
 export const current = query({
   args: { workspaceId: v.id("workspaces") },
   handler: async (ctx, args) => {
-    const userId = await auth.getUserId(ctx);
+    const userId = await getAuthUserId(ctx);
 
     //dont throw erros in queries, only in mutations
     if (userId === null) {
@@ -103,7 +103,7 @@ export const current = query({
     const member = await ctx.db
       .query("members")
       .withIndex("by_workspace_id_user_id", (q) =>
-        q.eq("workspaceId", args.workspaceId).eq("userId", userId)
+        q.eq("workspaceId", args.workspaceId).eq("userId", userId),
       )
       .unique();
 
@@ -121,7 +121,7 @@ export const update = mutation({
     role: v.union(v.literal("admin"), v.literal("member")),
   },
   handler: async (ctx, args) => {
-    const userId = await auth.getUserId(ctx);
+    const userId = await getAuthUserId(ctx);
 
     if (!userId) {
       throw new Error("Unauthorized");
@@ -136,7 +136,7 @@ export const update = mutation({
     const currentMember = await ctx.db
       .query("members")
       .withIndex("by_workspace_id_user_id", (q) =>
-        q.eq("workspaceId", member.workspaceId).eq("userId", userId)
+        q.eq("workspaceId", member.workspaceId).eq("userId", userId),
       )
       .unique();
 
@@ -158,7 +158,7 @@ export const remove = mutation({
   },
 
   handler: async (ctx, args) => {
-    const userId = await auth.getUserId(ctx);
+    const userId = await getAuthUserId(ctx);
 
     if (!userId) {
       throw new Error("Unauthorized");
@@ -173,7 +173,7 @@ export const remove = mutation({
     const currentMember = await ctx.db
       .query("members")
       .withIndex("by_workspace_id_user_id", (q) =>
-        q.eq("workspaceId", member.workspaceId).eq("userId", userId)
+        q.eq("workspaceId", member.workspaceId).eq("userId", userId),
       )
       .unique();
 
@@ -203,8 +203,8 @@ export const remove = mutation({
         .filter((q) =>
           q.or(
             q.eq(q.field("memberOneId"), member._id),
-            q.eq(q.field("memberTwoId"), member._id)
-          )
+            q.eq(q.field("memberTwoId"), member._id),
+          ),
         )
         .collect(),
     ]);

@@ -1,4 +1,5 @@
 import { v } from "convex/values";
+import { getAuthUserId } from "@convex-dev/auth/server";
 
 import { mutation, query } from "./_generated/server";
 import { auth } from "./auth";
@@ -9,7 +10,7 @@ export const remove = mutation({
   },
 
   handler: async (ctx, args) => {
-    const userId = await auth.getUserId(ctx);
+    const userId = await getAuthUserId(ctx);
 
     if (!userId) {
       throw new Error("Unauthorized");
@@ -24,7 +25,7 @@ export const remove = mutation({
     const member = await ctx.db
       .query("members")
       .withIndex("by_workspace_id_user_id", (q) =>
-        q.eq("workspaceId", channel.workspaceId).eq("userId", userId)
+        q.eq("workspaceId", channel.workspaceId).eq("userId", userId),
       )
       .unique();
 
@@ -56,7 +57,7 @@ export const update = mutation({
   },
 
   handler: async (ctx, args) => {
-    const userId = await auth.getUserId(ctx);
+    const userId = await getAuthUserId(ctx);
 
     if (!userId) {
       throw new Error("Unauthorized");
@@ -71,7 +72,7 @@ export const update = mutation({
     const member = await ctx.db
       .query("members")
       .withIndex("by_workspace_id_user_id", (q) =>
-        q.eq("workspaceId", channel.workspaceId).eq("userId", userId)
+        q.eq("workspaceId", channel.workspaceId).eq("userId", userId),
       )
       .unique();
 
@@ -94,7 +95,7 @@ export const create = mutation({
   },
 
   handler: async (ctx, args) => {
-    const userId = await auth.getUserId(ctx);
+    const userId = await getAuthUserId(ctx);
 
     if (!userId) {
       throw new Error("Unauthorized");
@@ -103,7 +104,7 @@ export const create = mutation({
     const member = await ctx.db
       .query("members")
       .withIndex("by_workspace_id_user_id", (q) =>
-        q.eq("workspaceId", args.workspaceId).eq("userId", userId)
+        q.eq("workspaceId", args.workspaceId).eq("userId", userId),
       )
       .unique();
 
@@ -126,7 +127,7 @@ export const create = mutation({
 export const getById = query({
   args: { id: v.id("channels") },
   handler: async (ctx, args) => {
-    const userId = await auth.getUserId(ctx);
+    const userId = await getAuthUserId(ctx);
 
     if (!userId) {
       throw new Error("Unauthorized");
@@ -141,7 +142,7 @@ export const getById = query({
     const member = await ctx.db
       .query("members")
       .withIndex("by_workspace_id_user_id", (q) =>
-        q.eq("workspaceId", channel.workspaceId).eq("userId", userId)
+        q.eq("workspaceId", channel.workspaceId).eq("userId", userId),
       )
       .unique();
 
@@ -159,7 +160,7 @@ export const get = query({
   },
 
   handler: async (ctx, args) => {
-    const userId = await auth.getUserId(ctx);
+    const userId = await getAuthUserId(ctx);
 
     if (!userId) {
       return [];
@@ -168,7 +169,7 @@ export const get = query({
     const member = await ctx.db
       .query("members")
       .withIndex("by_workspace_id_user_id", (q) =>
-        q.eq("workspaceId", args.workspaceId).eq("userId", userId)
+        q.eq("workspaceId", args.workspaceId).eq("userId", userId),
       )
       .unique();
 
@@ -179,7 +180,7 @@ export const get = query({
     const channels = await ctx.db
       .query("channels")
       .withIndex("by_workspace_id", (q) =>
-        q.eq("workspaceId", args.workspaceId)
+        q.eq("workspaceId", args.workspaceId),
       )
       .collect();
 

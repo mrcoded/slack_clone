@@ -2,18 +2,18 @@ import { v } from "convex/values";
 import { paginationOptsValidator } from "convex/server";
 
 import { mutation, query, QueryCtx } from "./_generated/server";
-import { auth } from "./auth";
+import { getAuthUserId } from "@convex-dev/auth/server";
 import { Doc, Id } from "./_generated/dataModel";
 
 export const getMember = async (
   ctx: QueryCtx,
   workspaceId: Id<"workspaces">,
-  userId: Id<"users">
+  userId: Id<"users">,
 ) => {
   return ctx.db
     .query("members")
     .withIndex("by_workspace_id_user_id", (q) =>
-      q.eq("workspaceId", workspaceId).eq("userId", userId)
+      q.eq("workspaceId", workspaceId).eq("userId", userId),
     )
     .unique();
 };
@@ -37,7 +37,7 @@ const populateThreads = async (ctx: QueryCtx, messageId: Id<"messages">) => {
   const messages = await ctx.db
     .query("messages")
     .withIndex("by_parent_message_id", (q) =>
-      q.eq("parentMessageId", messageId)
+      q.eq("parentMessageId", messageId),
     )
     .collect();
 
@@ -81,7 +81,7 @@ export const update = mutation({
   },
 
   handler: async (ctx, args) => {
-    const userId = await auth.getUserId(ctx);
+    const userId = await getAuthUserId(ctx);
 
     if (!userId) {
       throw new Error("Unauthorized");
@@ -114,7 +114,7 @@ export const remove = mutation({
   },
 
   handler: async (ctx, args) => {
-    const userId = await auth.getUserId(ctx);
+    const userId = await getAuthUserId(ctx);
 
     if (!userId) {
       throw new Error("Unauthorized");
@@ -141,7 +141,7 @@ export const remove = mutation({
 export const getById = query({
   args: { id: v.id("messages") },
   handler: async (ctx, args) => {
-    const userId = await auth.getUserId(ctx);
+    const userId = await getAuthUserId(ctx);
 
     if (!userId) {
       return [];
@@ -186,7 +186,7 @@ export const getById = query({
 
         if (existingReactions) {
           existingReactions.memberIds = Array.from(
-            new Set([...existingReactions.memberIds, reaction.memberId])
+            new Set([...existingReactions.memberIds, reaction.memberId]),
           );
         } else {
           acc.push({ ...reaction, memberIds: [reaction.memberId] });
@@ -197,11 +197,11 @@ export const getById = query({
       [] as (Doc<"reactions"> & {
         count: number;
         memberIds: Id<"members">[];
-      })[]
+      })[],
     );
 
     const reactionsWithoutMemberIdProperty = dedupedReactions.map(
-      ({ memberId, ...rest }) => rest
+      ({ memberId, ...rest }) => rest,
     );
 
     return {
@@ -225,7 +225,7 @@ export const get = query({
   },
 
   handler: async (ctx, args) => {
-    const userId = await auth.getUserId(ctx);
+    const userId = await getAuthUserId(ctx);
 
     if (!userId) {
       return [];
@@ -250,7 +250,7 @@ export const get = query({
         q
           .eq("channelId", args.channelId)
           .eq("parentMessageId", args.parentMessageId)
-          .eq("conversationId", _conversationId)
+          .eq("conversationId", _conversationId),
       )
       .order("desc")
       .paginate(args.paginationOpts);
@@ -285,12 +285,15 @@ export const get = query({
             const dedupedReactions = reactionsWithCounts.reduce(
               (acc, reaction) => {
                 const existingReactions = acc.find(
-                  (r) => r.value === reaction.value
+                  (r) => r.value === reaction.value,
                 );
 
                 if (existingReactions) {
                   existingReactions.memberIds = Array.from(
-                    new Set([...existingReactions.memberIds, reaction.memberId])
+                    new Set([
+                      ...existingReactions.memberIds,
+                      reaction.memberId,
+                    ]),
                   );
                 } else {
                   acc.push({ ...reaction, memberIds: [reaction.memberId] });
@@ -301,11 +304,11 @@ export const get = query({
               [] as (Doc<"reactions"> & {
                 count: number;
                 memberIds: Id<"members">[];
-              })[]
+              })[],
             );
 
             const reactionsWithoutMemberIdProperty = dedupedReactions.map(
-              ({ memberId, ...rest }) => rest
+              ({ memberId, ...rest }) => rest,
             );
 
             return {
@@ -320,10 +323,10 @@ export const get = query({
               threadName: threads.name,
               threadTimestamp: threads.timestamp,
             };
-          })
+          }),
         )
       ).filter(
-        (message): message is NonNullable<typeof message> => message !== null
+        (message): message is NonNullable<typeof message> => message !== null,
       ),
     };
   },
@@ -340,7 +343,7 @@ export const create = mutation({
   },
 
   handler: async (ctx, args) => {
-    const userId = await auth.getUserId(ctx);
+    const userId = await getAuthUserId(ctx);
 
     if (!userId) {
       throw new Error("Unauthorized");
